@@ -59,7 +59,12 @@ DNS resolves.
 
 ## Publishing a new build later
 
-The site serves whatever sits in `downloads/`. It does not update itself.
+**Automatic.** The "Inpani site auto-publish" scheduled task watches this folder and
+`Desktop\Inpani`. Build the apps and the new APKs are copied in, the file sizes on the page are
+corrected, and everything is committed and pushed - GitHub Pages redeploys about a minute later.
+Editing `index.html` by hand publishes the same way.
+
+Nothing below is needed unless you want to publish by hand:
 
 ```bash
 cp /c/Users/bilal/Desktop/Inpani/Inpani-Customer.apk downloads/Inpani-Customer.apk
