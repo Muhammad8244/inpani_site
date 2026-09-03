@@ -1,0 +1,28 @@
+# Netlify config for inpani.pk
+
+[build]
+  publish = "."
+
+# Force APKs to download rather than open in the browser, and name the file sensibly.
+[[headers]]
+  for = "/downloads/*.apk"
+  [headers.values]
+    Content-Type = "application/vnd.android.package-archive"
+    Content-Disposition = "attachment"
+    Cache-Control = "public, max-age=300"
+
+# The page itself must never be stale — it advertises app versions and prices.
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Send the bare domain to www or vice versa in the Netlify UI, not here — keeping this file
+# free of redirects avoids fighting whichever primary domain you pick.

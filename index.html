@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>document.documentElement.className+=" js";</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inpani — Water tankers at your price</title>
+<meta name="description" content="Bulk water tanker delivery in Rawalpindi and Islamabad. You name the price, nearby drivers bid for the job, you pick the offer. Cash on delivery.">
+<meta property="og:title" content="Inpani — Water tankers at your price">
+<meta property="og:description" content="Name your price. Drivers bid. You choose. Bulk water tankers in Rawalpindi and Islamabad, cash on delivery.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://inpani.pk/">
+<meta property="og:image" content="https://inpani.pk/logo.svg">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#0F4A57">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<style>
+:root{
+  --aqua:#00B4D8; --aqua-lt:#48CAE4; --sky:#CAF0F8;
+  --teal:#0F4A57; --teal-2:#125A6B; --teal-mid:#3E8E9C; --cream:#F1EFE8;
+  --ink:#0B2B33; --muted:#5B7C85; --white:#fff;
+  --wrap:1140px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#fff;color:var(--ink);
+  font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{line-height:1.08;margin:0 0 .45em;letter-spacing:-.03em;font-weight:800}
+h1{font-size:clamp(2.5rem,6.4vw,4.6rem)}
+h2{font-size:clamp(1.9rem,4.2vw,3.1rem)}
+h3{font-size:1.2rem;letter-spacing:-.02em}
+p{margin:0 0 1em}
+a{color:var(--aqua);text-decoration:none}
+:focus-visible{outline:3px solid var(--aqua);outline-offset:3px;border-radius:8px}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 22px}
+.btn{display:inline-flex;align-items:center;gap:.5em;padding:1em 1.9em;border-radius:999px;
+  font-weight:700;font-size:1.02rem;border:2px solid transparent;cursor:pointer;
+  transition:transform .18s cubic-bezier(.2,.8,.3,1),box-shadow .18s,background .18s}
+.btn:hover{transform:translateY(-2px)}
+.btn-primary{background:var(--aqua);color:#00303B;box-shadow:0 10px 26px -10px rgba(0,180,216,.9)}
+.btn-primary:hover{background:#22C5E6;box-shadow:0 16px 34px -12px rgba(0,180,216,1)}
+.btn-cream{background:var(--cream);color:var(--teal)}
+.btn-ghost{border-color:rgba(241,239,232,.45);color:var(--cream)}
+.btn-ghost:hover{background:rgba(255,255,255,.09)}
+.btn-outline{border-color:#BFE6EF;color:var(--teal);background:#fff}
+.btn-outline:hover{background:var(--sky)}
+
+/* reveal on scroll */
+/* Reveal-on-scroll is OPT-IN: the hidden state only applies once JS has confirmed it is
+   running (html.js). Without this guard, a JS failure, a slow parse, or a scroll that never
+   fires an intersection event leaves whole sections permanently blank. Content first. */
+html.js .rv{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.8,.3,1)}
+html.js .rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){html.js .rv{opacity:1;transform:none;transition:none}
+  .float,.pulse,.bob{animation:none!important}}
+
+/* header */
+header{position:sticky;top:0;z-index:60;background:rgba(15,74,87,.92);backdrop-filter:blur(10px)}
+.nav{display:flex;align-items:center;gap:16px;height:74px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:850;font-size:1.3rem;color:#fff;letter-spacing:-.03em}
+.brand svg{width:40px;height:40px;border-radius:11px;flex:none}
+.nav-links{display:flex;gap:28px;margin-left:auto}
+.nav-links a{color:rgba(241,239,232,.88);font-weight:550;font-size:.97rem}
+.nav-links a:hover{color:#fff}
+.nav-cta{margin-left:24px;padding:.72em 1.4em;font-size:.95rem}
+.menu-btn{display:none;margin-left:auto;background:none;border:0;padding:9px;cursor:pointer}
+.menu-btn span{display:block;width:25px;height:2.5px;background:var(--cream);margin:5px 0;border-radius:2px}
+
+/* hero */
+.hero{position:relative;background:linear-gradient(160deg,#0F4A57 0%,#12606F 55%,#146C7A 100%);
+  color:var(--cream);padding:86px 0 150px;overflow:hidden}
+.hero::before{content:"";position:absolute;width:760px;height:760px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,180,216,.28),transparent 68%);top:-300px;right:-220px}
+.hero-grid{position:relative;display:grid;grid-template-columns:1.06fr .94fr;gap:52px;align-items:center}
+.hero h1{color:#fff}
+.hero h1 em{font-style:normal;color:var(--aqua-lt)}
+.pill{display:inline-flex;align-items:center;gap:.6em;background:rgba(202,240,248,.14);
+  border:1px solid rgba(202,240,248,.3);color:var(--sky);font-weight:650;font-size:.83rem;
+  letter-spacing:.05em;text-transform:uppercase;padding:.5em 1.05em;border-radius:999px;margin-bottom:22px}
+.dot{width:8px;height:8px;border-radius:50%;background:#43E08A}
+.pulse{animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.hero .lead{font-size:1.2rem;color:rgba(241,239,232,.85);max-width:31em}
+.hero-btns{display:flex;flex-wrap:wrap;gap:14px;margin-top:30px}
+.hero-note{margin-top:20px;font-size:.9rem;color:rgba(241,239,232,.6)}
+.wave{position:absolute;bottom:-1px;left:0;width:100%;height:90px;display:block}
+.float{animation:float 6s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-13px)}}
+
+/* bid mock */
+.mock{position:relative;background:#fff;border-radius:26px;padding:22px;
+  box-shadow:0 40px 80px -30px rgba(0,0,0,.55)}
+.mock-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.mock-top b{color:var(--teal);font-size:1.02rem}
+.mock-top span{font-size:.78rem;color:#fff;background:var(--teal-mid);padding:.32em .8em;border-radius:999px}
+.bid{display:flex;align-items:center;gap:13px;padding:13px;border:1.5px solid #E3EEF1;
+  border-radius:15px;margin-bottom:10px;background:#fff}
+.bid.win{border-color:var(--aqua);background:#F2FDFF;box-shadow:0 0 0 4px rgba(0,180,216,.11)}
+.av{width:40px;height:40px;border-radius:50%;background:var(--sky);flex:none;
+  display:flex;align-items:center;justify-content:center;font-weight:800;color:#0A5766;font-size:.9rem}
+.bid .nm{font-weight:700;font-size:.94rem;color:var(--ink);line-height:1.25}
+.bid .sub{font-size:.78rem;color:var(--muted)}
+.bid .pr{margin-left:auto;text-align:right;font-weight:850;color:var(--teal);font-size:1.06rem;letter-spacing:-.02em}
+.bid .pr small{display:block;font-weight:500;font-size:.7rem;color:var(--muted);letter-spacing:0}
+.bob{animation:bob 3.4s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+
+/* strip */
+.strip{background:var(--sky);padding:20px 0}
+.strip ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:14px 40px;justify-content:center}
+.strip li{display:flex;align-items:center;gap:.55em;font-weight:650;color:#0A5766;font-size:.95rem}
+.strip svg{width:19px;height:19px;flex:none}
+
+section{padding:92px 0}
+.sec-head{max-width:42em;margin-bottom:52px}
+.sec-head .kick{color:var(--aqua);font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+  font-size:.82rem;margin-bottom:12px}
+.sec-head p{color:var(--muted);font-size:1.1rem;margin:0}
+.center{margin-left:auto;margin-right:auto;text-align:center}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.step{position:relative;padding:30px 26px;border-radius:20px;background:#fff;
+  border:1.5px solid #E6F1F4;transition:transform .2s,box-shadow .2s,border-color .2s}
+.step:hover{transform:translateY(-5px);border-color:#BFE6EF;box-shadow:0 22px 46px -26px rgba(15,74,87,.5)}
+.step .n{position:absolute;top:-15px;left:26px;width:34px;height:34px;border-radius:11px;
+  background:var(--teal);color:var(--cream);display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:.92rem}
+.step svg{width:36px;height:36px;margin:10px 0 14px;display:block}
+.step p{margin:0;color:var(--muted);font-size:.96rem}
+
+/* sizes */
+.sizes{display:grid;grid-template-columns:1fr 1fr;gap:26px;max-width:900px;margin:0 auto}
+.size{border-radius:24px;padding:38px 32px;text-align:center;border:2px solid #E6F1F4;background:#fff;
+  transition:transform .2s,box-shadow .2s}
+.size:hover{transform:translateY(-6px);box-shadow:0 26px 54px -28px rgba(15,74,87,.55)}
+.size.hi{border-color:var(--aqua);background:linear-gradient(180deg,#F4FDFF,#fff)}
+/* The badge row is reserved on EVERY card (empty via ::before on untagged ones) so the two
+   cards' artwork and headings line up whether or not a card carries a badge. */
+.size .tag{display:block;width:fit-content;margin:0 auto 16px;font-size:.74rem;font-weight:800;
+  letter-spacing:.08em;text-transform:uppercase;background:var(--aqua);color:#00303B;
+  padding:.35em .9em;border-radius:999px}
+.size:not(.hi)::before{content:"";display:block;height:calc(.7em + 1.15rem);margin-bottom:16px}
+/* svg must be block, or it shares a line box with the badge and the two collide */
+.size svg{display:block;height:96px;margin:0 auto 16px}
+.size .name{font-size:2.1rem;font-weight:850;color:var(--teal);letter-spacing:-.03em;line-height:1}
+.size .vol{color:var(--muted);font-size:.94rem;margin-top:8px}
+.size .use{color:var(--ink);font-size:.94rem;margin-top:14px}
+.sizes-note{text-align:center;color:var(--muted);margin:32px auto 0;max-width:40em;font-size:.97rem}
+
+/* why */
+.why{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.why div{padding:30px 26px;border-radius:20px;background:linear-gradient(165deg,#F6FDFF,#EAF8FC);
+  border:1px solid #DCF0F6}
+.why h3{color:var(--teal)}
+.why p{margin:0;color:#2E5D68;font-size:.95rem}
+.why .ic{width:46px;height:46px;border-radius:14px;background:var(--teal);display:flex;
+  align-items:center;justify-content:center;margin-bottom:16px}
+.why .ic svg{width:24px;height:24px}
+
+/* drivers */
+.drivers{position:relative;background:var(--teal);color:rgba(241,239,232,.86);overflow:hidden}
+.drivers::before{content:"";position:absolute;width:640px;height:640px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,180,216,.2),transparent 70%);bottom:-320px;left:-200px}
+.drivers h2{color:#fff}
+.drivers-grid{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.drivers ul{list-style:none;padding:0;margin:0 0 32px}
+.drivers li{padding:13px 0 13px 36px;position:relative;border-bottom:1px solid rgba(241,239,232,.14)}
+.drivers li::before{content:"";position:absolute;left:0;top:20px;width:18px;height:18px;border-radius:50%;
+  background:var(--aqua);box-shadow:inset 0 0 0 4px var(--teal)}
+.earn{background:#12606F;border:1px solid rgba(202,240,248,.18);border-radius:24px;padding:30px}
+.earn .lbl{font-size:.82rem;letter-spacing:.07em;text-transform:uppercase;color:rgba(202,240,248,.7)}
+.earn .big{font-size:2.7rem;font-weight:850;color:#fff;letter-spacing:-.03em;line-height:1.1;margin:6px 0 22px}
+.earn .row{display:flex;justify-content:space-between;padding:13px 0;border-top:1px solid rgba(241,239,232,.14);font-size:.94rem}
+.earn .row b{color:#fff;font-weight:700}
+
+/* download */
+.dlwrap{background:linear-gradient(165deg,#F4FDFF,#E4F6FB)}
+.dl{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.dl-card{background:#fff;border:1.5px solid #DCF0F6;border-radius:24px;padding:34px;
+  display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s}
+.dl-card:hover{transform:translateY(-5px);box-shadow:0 26px 54px -28px rgba(15,74,87,.5)}
+.dl-card svg.icn{width:66px;height:66px;border-radius:17px;margin-bottom:16px}
+.dl-card .meta{color:var(--muted);font-size:.88rem;margin-bottom:14px}
+.dl-card .btn{align-self:flex-start;margin-top:auto}
+.dl-note{margin-top:26px;font-size:.93rem;color:#0A5766;background:#fff;border:1px dashed #9AD8E6;
+  padding:18px 22px;border-radius:16px}
+
+/* faq */
+.faq{max-width:820px;margin:0 auto}
+details{border:1.5px solid #E6F1F4;border-radius:16px;margin-bottom:12px;background:#fff;transition:border-color .2s}
+details[open]{border-color:#BFE6EF}
+summary{padding:20px 52px 20px 24px;font-weight:700;cursor:pointer;position:relative;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"";position:absolute;right:24px;top:27px;width:9px;height:9px;
+  border-right:2.5px solid var(--aqua);border-bottom:2.5px solid var(--aqua);transform:rotate(45deg);transition:.2s}
+details[open] summary::after{transform:rotate(-135deg)}
+details p{color:var(--muted);padding:0 24px 22px;margin:0}
+
+/* cta band */
+.cta{background:var(--aqua);color:#00303B;text-align:center;padding:76px 0}
+.cta h2{color:#00303B}
+.cta p{max-width:34em;margin:0 auto 26px;color:#004B5B;font-size:1.1rem}
+
+footer{background:var(--teal);color:rgba(241,239,232,.78);padding:60px 0 34px;font-size:.94rem}
+footer a{color:rgba(241,239,232,.86)}
+footer a:hover{color:#fff}
+.f-grid{display:flex;flex-wrap:wrap;gap:44px;justify-content:space-between;margin-bottom:36px}
+.f-brand{display:flex;align-items:center;gap:11px;color:#fff;font-weight:850;font-size:1.25rem;margin-bottom:14px}
+.f-brand svg{width:38px;height:38px;border-radius:11px}
+.f-links{display:flex;gap:52px;flex-wrap:wrap}
+.f-links h4{color:#fff;font-size:.86rem;margin:0 0 14px;letter-spacing:.07em;text-transform:uppercase}
+.f-links ul{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+.f-bottom{border-top:1px solid rgba(241,239,232,.15);padding-top:24px;display:flex;
+  flex-wrap:wrap;gap:12px;justify-content:space-between;font-size:.86rem}
+
+@media(max-width:920px){
+  .hero-grid,.drivers-grid{grid-template-columns:1fr;gap:44px}
+  .steps,.why{grid-template-columns:repeat(2,1fr)}
+  .dl{grid-template-columns:1fr}
+  .nav-links{display:none;position:absolute;top:74px;left:0;right:0;background:var(--teal);
+    flex-direction:column;gap:0;padding:8px 22px 18px}
+  .nav-links.open{display:flex}
+  .nav-links a{padding:14px 0;border-bottom:1px solid rgba(241,239,232,.12)}
+  .nav-cta{display:none}
+  .menu-btn{display:block}
+  section{padding:70px 0}
+  .hero{padding:64px 0 120px}
+}
+@media(max-width:600px){
+  .steps,.why,.sizes{grid-template-columns:1fr}
+  .strip ul{gap:12px 22px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top" aria-label="Inpani home">
+      <svg viewBox="0 0 512 512" role="img" aria-label="Inpani logo"><defs><clipPath id="dc"><path d="M256,138 C300,200 330,238 330,272 A74,74 0 1 1 182,272 C182,238 212,200 256,138 Z"/></clipPath></defs><rect width="512" height="512" rx="116" fill="#0F4A57"/><g fill="none" stroke-linecap="round"><path d="M132,217 A132,132 0 0 1 380,217" stroke="#F1EFE8" stroke-width="52"/><path d="M124.5,273.5 A132,132 0 0 0 233,392" stroke="#3E8E9C" stroke-width="52"/><path d="M387.5,273.5 A132,132 0 0 1 279,392" stroke="#3E8E9C" stroke-width="52"/></g><path d="M256,138 C300,200 330,238 330,272 A74,74 0 1 1 182,272 C182,238 212,200 256,138 Z" fill="#F1EFE8"/><path d="M180,268 C204,257 226,276 249,268 C272,260 292,254 332,269 L332,352 L180,352 Z" fill="#3E8E9C" clip-path="url(#dc)"/></svg>
+      Inpani
+    </a>
+    <button class="menu-btn" aria-label="Menu" aria-expanded="false" id="menuBtn"><span></span><span></span><span></span></button>
+    <nav class="nav-links" id="navLinks">
+      <a href="#how">How it works</a>
+      <a href="#sizes">Sizes</a>
+      <a href="#drivers">For drivers</a>
+      <a href="#download">Download</a>
+    </nav>
+    <a class="btn btn-primary nav-cta" href="#download">Get the app</a>
+  </div>
+</header>
+
+<main id="top">
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="pill"><i class="dot pulse"></i> Live in Rawalpindi &amp; Islamabad</span>
+      <h1>Water tankers.<br><em>At your price.</em></h1>
+      <p class="lead">Say what you'll pay. Drivers near you bid for the job. You pick the offer you
+        like and pay cash when the water arrives.</p>
+      <div class="hero-btns">
+        <a class="btn btn-primary" href="#download">Download the app</a>
+        <a class="btn btn-ghost" href="#drivers">Drive with us</a>
+      </div>
+      <p class="hero-note">Free Android app · Cash on delivery · No booking fee</p>
+    </div>
+    <div class="float">
+      <div class="mock">
+        <div class="mock-top"><b>3 offers on your order</b><span>Full tanker</span></div>
+        <div class="bid win bob">
+          <div class="av">RA</div>
+          <div><div class="nm">Rashid A.</div><div class="sub">★ 4.9 · 212 trips · 1.2 km</div></div>
+          <div class="pr">Rs 5,400<small>best offer</small></div>
+        </div>
+        <div class="bid">
+          <div class="av">MK</div>
+          <div><div class="nm">Muhammad K.</div><div class="sub">★ 4.7 · 96 trips · 2.4 km</div></div>
+          <div class="pr">Rs 5,800<small>2:41 left</small></div>
+        </div>
+        <div class="bid">
+          <div class="av">SH</div>
+          <div><div class="nm">Shahid H.</div><div class="sub">★ 4.8 · 340 trips · 3.1 km</div></div>
+          <div class="pr">Rs 6,100<small>2:12 left</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <svg class="wave" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,44 C220,96 420,4 720,34 C1010,63 1220,96 1440,52 L1440,90 L0,90 Z" fill="#fff"/>
+  </svg>
+</section>
+
+<div class="strip">
+  <div class="wrap">
+    <ul>
+      <li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="6" width="20" height="13" rx="3" stroke="#0A5766" stroke-width="2"/><circle cx="12" cy="12.5" r="3" stroke="#0A5766" stroke-width="2"/></svg> Cash on delivery</li>
+      <li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7Z" stroke="#0A5766" stroke-width="2"/></svg> Live tracking</li>
+      <li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m12 3 2.7 6.1 6.3.6-4.8 4.3 1.4 6.5L12 17.2 6.4 20.5l1.4-6.5L3 9.7l6.3-.6L12 3Z" stroke="#0A5766" stroke-width="2" stroke-linejoin="round"/></svg> Rated drivers</li>
+      <li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="#0A5766" stroke-width="2"/><path d="M12 7v5.5l3.5 2" stroke="#0A5766" stroke-width="2" stroke-linecap="round"/></svg> Offers in minutes</li>
+      <li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 13h16M6 13V8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v5" stroke="#0A5766" stroke-width="2"/><circle cx="8" cy="17" r="2" stroke="#0A5766" stroke-width="2"/><circle cx="16" cy="17" r="2" stroke="#0A5766" stroke-width="2"/></svg> Bulk supply, not bottled</li>
+    </ul>
+  </div>
+</div>
+
+<section id="how">
+  <div class="wrap">
+    <div class="sec-head center rv">
+      <div class="kick">How it works</div>
+      <h2>Six taps to a full tank</h2>
+      <p>No phone calls, no bargaining, no fixed tariff. The whole thing happens in the app.</p>
+    </div>
+    <div class="steps">
+      <div class="step rv"><div class="n">1</div>
+        <svg viewBox="0 0 36 36" fill="none" aria-hidden="true"><path d="M18 3a12 12 0 0 1 12 12c0 8.5-12 18-12 18S6 23.5 6 15A12 12 0 0 1 18 3Z" fill="#CAF0F8" stroke="#0F4A57" stroke-width="2.2"/><circle cx="18" cy="15" r="4.4" fill="#0F4A57"/></svg>
+        <h3>Drop your pin</h3><p>Mark exactly where the tanker should pull up.</p></div>
+      <div class="step rv"><div class="n">2</div>
+        <svg viewBox="0 0 36 36" fill="none" aria-hidden="true"><rect x="3" y="12" width="13" height="15" rx="6.5" fill="#CAF0F8" stroke="#0F4A57" stroke-width="2.2"/><rect x="20" y="7" width="13" height="20" rx="6.5" fill="#48CAE4" stroke="#0F4A57" stroke-width="2.2"/></svg>
+        <h3>Half or full</h3><p>Pick the tanker size you need. No litre maths.</p></div>
+      <div class="step rv"><div class="n">3</div>
+        <svg viewBox="0 0 36 36" fill="none" aria-hidden="true"><circle cx="18" cy="18" r="14.5" fill="#CAF0F8" stroke="#0F4A57" stroke-width="2.2"/><path d="M18 9v18M13.5 13.5h8a3.4 3.4 0 0 1 0 6.8h-7a3.4 3.4 0 0 0 0 6.8h8" stroke="#0F4A57" stroke-width="2.2" stroke-linecap="round"/></svg>
+        <h3>Name your price</h3><p>The app suggests a rate. Offer what suits you.</p></div>
+      <div class="step rv"><div class="n">4</div>
+        <svg viewBox="0 0 36 36" fill="none" aria-hidden="true"><rect x="3" y="6" width="30" height="8" rx="4" fill="#00B4D8"/><rect x="3" y="17" width="23" height="8" rx="4" fill="#CAF0F8" stroke="#0F4A57" stroke-width="1.8"/><rect x="3" y="28" width="15" height="6" rx="3" fill="#CAF0F8"/></svg>
+        <h3>Drivers bid</h3><p>Competing offers with price, rating and distance.</p></div>
+      <div class="step rv"><div class="n">5</div>
+        <svg viewBox="0 0 36 36" fill="none" aria-hidden="true"><circle cx="18" cy="18" r="14.5" fill="#00B4D8"/><path d="M11 18.5 16 24l9-11" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <h3>Pick your driver</h3><p>Accept an offer and that price is locked.</p></div>
+      <div class="step rv"><div class="n">6</div>
+        <svg viewBox="0 0 36 36" fill="none" aria-hidden="true"><circle cx="18" cy="18" r="5" fill="#0F4A57"/><circle cx="18" cy="18" r="10.5" stroke="#48CAE4" stroke-width="2.4"/><circle cx="18" cy="18" r="15" stroke="#CAF0F8" stroke-width="2.4"/></svg>
+        <h3>Track and pay</h3><p>Watch it arrive, then pay the driver in cash.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="sizes" style="background:#F7FDFF">
+  <div class="wrap">
+    <div class="sec-head center rv">
+      <div class="kick">Tanker sizes</div>
+      <h2>Order by size, not by litres</h2>
+      <p>On the ground a tanker is half or full — so that is exactly how you order it.</p>
+    </div>
+    <div class="sizes">
+      <div class="size hi rv">
+        <span class="tag">Most ordered</span>
+        <svg viewBox="0 0 200 110" role="img" aria-label="A full tanker barrel">
+          <rect x="12" y="26" width="176" height="60" rx="30" fill="#00B4D8" stroke="#0F4A57" stroke-width="3"/>
+          <rect x="24" y="38" width="60" height="10" rx="5" fill="rgba(255,255,255,.45)"/>
+        </svg>
+        <div class="name">Full</div>
+        <div class="vol">approx. 5,000 litres</div>
+        <p class="use">Underground tanks, construction sites, big households.</p>
+      </div>
+      <div class="size rv">
+        <svg viewBox="0 0 200 110" role="img" aria-label="A half filled tanker barrel">
+          <defs><clipPath id="halfclip"><rect x="12" y="56" width="176" height="30"/></clipPath></defs>
+          <rect x="12" y="26" width="176" height="60" rx="30" fill="#EAF8FC" stroke="#0F4A57" stroke-width="3"/>
+          <g clip-path="url(#halfclip)"><rect x="12" y="26" width="176" height="60" rx="30" fill="#48CAE4"/></g>
+          <path d="M12,57 C40,50 62,64 92,57 C124,50 156,62 188,56" stroke="#0F4A57" stroke-width="2.4" fill="none"/>
+        </svg>
+        <div class="name">Half</div>
+        <div class="vol">approx. 2,000 litres</div>
+        <p class="use">Rooftop tanks, small homes, topping up.</p>
+      </div>
+    </div>
+    <p class="sizes-note"><strong>This is bulk tanker water for general use</strong> — washing,
+      cleaning, tanks, gardens and construction. It is not bottled or treated drinking water.</p>
+  </div>
+</section>
+
+<section id="why">
+  <div class="wrap">
+    <div class="sec-head center rv">
+      <div class="kick">Why Inpani</div>
+      <h2>The price is a conversation, not a rate card</h2>
+    </div>
+    <div class="why">
+      <div class="rv"><div class="ic"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 6v12M8.5 9h6a2.5 2.5 0 0 1 0 5h-5a2.5 2.5 0 0 0 0 5h6" stroke="#48CAE4" stroke-width="2.2" stroke-linecap="round"/></svg></div>
+        <h3>You name the price</h3><p>No fixed tariff. You decide what the load is worth.</p></div>
+      <div class="rv"><div class="ic"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="18" height="5" rx="2.5" fill="#48CAE4"/><rect x="3" y="11" width="13" height="5" rx="2.5" fill="#3E8E9C"/><rect x="3" y="18" width="8" height="4" rx="2" fill="#CAF0F8"/></svg></div>
+        <h3>Drivers compete</h3><p>Several offers on one order, so the price finds its level.</p></div>
+      <div class="rv"><div class="ic"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="3" fill="#48CAE4"/><circle cx="12" cy="12" r="7" stroke="#48CAE4" stroke-width="2"/><circle cx="12" cy="12" r="10.5" stroke="#3E8E9C" stroke-width="1.6"/></svg></div>
+        <h3>Live tracking</h3><p>Watch the tanker approach with an ETA that actually moves.</p></div>
+      <div class="rv"><div class="ic"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m12 3 2.7 6.1 6.3.6-4.8 4.3 1.4 6.5L12 17.2 6.4 20.5l1.4-6.5L3 9.7l6.3-.6L12 3Z" fill="#48CAE4"/></svg></div>
+        <h3>Rated drivers</h3><p>Every offer carries that driver's stars and trip count.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="drivers" class="drivers">
+  <div class="wrap drivers-grid">
+    <div class="rv">
+      <div class="kick" style="color:var(--aqua-lt);font-weight:800;letter-spacing:.09em;text-transform:uppercase;font-size:.82rem;margin-bottom:12px">For drivers</div>
+      <h2>Own a tanker? Set your own rate.</h2>
+      <p>Work the hours you want and take only the jobs worth your diesel. You see the customer's
+        asking price and the distance before you bid a single rupee.</p>
+      <ul>
+        <li>Go online when you like — nearby orders appear on their own.</li>
+        <li>Bid your number, or ignore the job. No pressure, no penalty.</li>
+        <li>One live bid at a time, so you are never double-booked.</li>
+        <li>Earnings tracked per delivery, daily and lifetime.</li>
+      </ul>
+      <a class="btn btn-primary" href="#download">Register and earn</a>
+    </div>
+    <div class="rv">
+      <div class="earn">
+        <div class="lbl">Today's earnings</div>
+        <div class="big">Rs 11,200</div>
+        <div class="row"><span>Full tanker · Bahria Town</span><b>Rs 5,400</b></div>
+        <div class="row"><span>Half tanker · Saddar</span><b>Rs 2,900</b></div>
+        <div class="row"><span>Full tanker · G-11</span><b>Rs 2,900</b></div>
+        <div class="row"><span>Deliveries completed</span><b>3</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="download" class="dlwrap">
+  <div class="wrap">
+    <div class="sec-head center rv">
+      <div class="kick">Download</div>
+      <h2>Two apps. Pick your side.</h2>
+      <p>One for ordering water, one for delivering it.</p>
+    </div>
+    <div class="dl">
+      <div class="dl-card rv">
+        <svg class="icn" viewBox="0 0 512 512" role="img" aria-label="Inpani app icon"><defs><clipPath id="d2"><path d="M256,138 C300,200 330,238 330,272 A74,74 0 1 1 182,272 C182,238 212,200 256,138 Z"/></clipPath></defs><rect width="512" height="512" rx="116" fill="#0F4A57"/><g fill="none" stroke-linecap="round"><path d="M132,217 A132,132 0 0 1 380,217" stroke="#F1EFE8" stroke-width="52"/><path d="M124.5,273.5 A132,132 0 0 0 233,392" stroke="#3E8E9C" stroke-width="52"/><path d="M387.5,273.5 A132,132 0 0 1 279,392" stroke="#3E8E9C" stroke-width="52"/></g><path d="M256,138 C300,200 330,238 330,272 A74,74 0 1 1 182,272 C182,238 212,200 256,138 Z" fill="#F1EFE8"/><path d="M180,268 C204,257 226,276 249,268 C272,260 292,254 332,269 L332,352 L180,352 Z" fill="#3E8E9C" clip-path="url(#d2)"/></svg>
+        <h3>Inpani</h3>
+        <p class="meta">For customers · Android · 48.9 MB</p>
+        <p>Order a tanker, name your price, compare offers and track the delivery to your gate.</p>
+        <a class="btn btn-primary" href="downloads/Inpani-Customer.apk" download>Download APK</a>
+      </div>
+      <div class="dl-card rv">
+        <svg class="icn" viewBox="0 0 512 512" role="img" aria-label="Inpani Driver app icon"><defs><clipPath id="d3"><path d="M256,138 C300,200 330,238 330,272 A74,74 0 1 1 182,272 C182,238 212,200 256,138 Z"/></clipPath></defs><rect width="512" height="512" rx="116" fill="#0B3C46"/><g fill="none" stroke-linecap="round"><path d="M132,217 A132,132 0 0 1 380,217" stroke="#F1EFE8" stroke-width="52"/><path d="M124.5,273.5 A132,132 0 0 0 233,392" stroke="#48CAE4" stroke-width="52"/><path d="M387.5,273.5 A132,132 0 0 1 279,392" stroke="#48CAE4" stroke-width="52"/></g><path d="M256,138 C300,200 330,238 330,272 A74,74 0 1 1 182,272 C182,238 212,200 256,138 Z" fill="#F1EFE8"/><path d="M180,268 C204,257 226,276 249,268 C272,260 292,254 332,269 L332,352 L180,352 Z" fill="#48CAE4" clip-path="url(#d3)"/></svg>
+        <h3>Inpani Driver</h3>
+        <p class="meta">For drivers · Android · 48.8 MB</p>
+        <p>See nearby orders, bid what the job is worth to you, and track what you earn.</p>
+        <a class="btn btn-primary" href="downloads/Inpani-Driver.apk" download>Download APK</a>
+      </div>
+    </div>
+    <p class="dl-note"><strong>These are direct downloads, not Play Store apps yet.</strong>
+      When you open the file, Android will ask for permission to install from your browser — allow
+      it, then tap Install.</p>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap faq">
+    <div class="sec-head center rv"><div class="kick">Questions</div><h2>Good to know</h2></div>
+    <details class="rv"><summary>How do I pay?</summary>
+      <p>Cash on delivery. You pay the driver directly, in cash, at the price you accepted when you
+        picked their offer. Nothing is charged in the app and there is no booking fee.</p></details>
+    <details class="rv"><summary>Is this drinking water?</summary>
+      <p>No. Inpani delivers bulk tanker water for general use — washing, cleaning, filling
+        underground and rooftop tanks, gardens and construction. It is not bottled, filtered or
+        treated drinking water, and you should not assume it is safe to drink.</p></details>
+    <details class="rv"><summary>How is the price decided?</summary>
+      <p>You decide what to offer and drivers decide whether to take it. The app suggests a
+        starting rate for the size you picked, you can change it, and drivers send back their own
+        offers. Accept the one you want and that price is fixed for the delivery.</p></details>
+    <details class="rv"><summary>What areas do you cover?</summary>
+      <p>Rawalpindi and Islamabad. Drivers only see orders within a short radius of where they
+        are, so the closer you are to active drivers, the more offers you will get.</p></details>
+    <details class="rv"><summary>How long does delivery take?</summary>
+      <p>It depends how far your driver is. Every offer shows that driver's live distance and an
+        estimated time, and once you accept you can watch them approach on the map.</p></details>
+    <details class="rv"><summary>How do I become a driver?</summary>
+      <p>Download Inpani Driver, sign in with your phone number and complete your profile,
+        including your tanker size. Once it is complete you can go online and start bidding on
+        nearby orders straight away.</p></details>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap rv">
+    <h2>Your tank is empty. Somebody nearby is full.</h2>
+    <p>Post what you'll pay and let the tankers come to you.</p>
+    <a class="btn btn-cream" href="#download">Download Inpani</a>
+  </div>
+</section>
+
+</main>
+
+<footer id="contact">
+  <div class="wrap">
+    <div class="f-grid">
+      <div>
+        <div class="f-brand">
+          <svg viewBox="0 0 512 512" role="img" aria-label="Inpani logo"><defs><clipPath id="d4"><path d="M256,138 C300,200 330,238 330,272 A74,74 0 1 1 182,272 C182,238 212,200 256,138 Z"/></clipPath></defs><rect width="512" height="512" rx="116" fill="#12606F"/><g fill="none" stroke-linecap="round"><path d="M132,217 A132,132 0 0 1 380,217" stroke="#F1EFE8" stroke-width="52"/><path d="M124.5,273.5 A132,132 0 0 0 233,392" stroke="#3E8E9C" stroke-width="52"/><path d="M387.5,273.5 A132,132 0 0 1 279,392" stroke="#3E8E9C" stroke-width="52"/></g><path d="M256,138 C300,200 330,238 330,272 A74,74 0 1 1 182,272 C182,238 212,200 256,138 Z" fill="#F1EFE8"/><path d="M180,268 C204,257 226,276 249,268 C272,260 292,254 332,269 L332,352 L180,352 Z" fill="#3E8E9C" clip-path="url(#d4)"/></svg>
+          Inpani
+        </div>
+        <p style="max-width:25em;margin:0">Bulk water tankers delivered at a price you set.<br>
+          Rawalpindi and Islamabad. Cash on delivery.</p>
+      </div>
+      <div class="f-links">
+        <div><h4>Product</h4><ul>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#sizes">Tanker sizes</a></li>
+          <li><a href="#download">Download</a></li>
+        </ul></div>
+        <div><h4>Drivers</h4><ul>
+          <li><a href="#drivers">Drive with Inpani</a></li>
+          <li><a href="#download">Driver app</a></li>
+        </ul></div>
+        <div><h4>Contact</h4><ul>
+          <li><a href="mailto:support@inpani.pk">support@inpani.pk</a></li>
+          <li><a href="mailto:drivers@inpani.pk">drivers@inpani.pk</a></li>
+        </ul></div>
+      </div>
+    </div>
+    <div class="f-bottom">
+      <span>&copy; 2026 Inpani. All rights reserved.</span>
+      <span>inpani.pk</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var b=document.getElementById('menuBtn'), n=document.getElementById('navLinks');
+  b.addEventListener('click',function(){
+    var open=n.classList.toggle('open');
+    b.setAttribute('aria-expanded',open?'true':'false');
+  });
+  n.addEventListener('click',function(e){
+    if(e.target.tagName==='A'){n.classList.remove('open');b.setAttribute('aria-expanded','false');}
+  });
+  var items=[].slice.call(document.querySelectorAll('.rv'));
+  function show(el){el.classList.add('in');}
+  if(!('IntersectionObserver' in window)){ items.forEach(show); return; }
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ show(e.target); io.unobserve(e.target);} });
+  },{threshold:.08,rootMargin:'0px 0px -40px 0px'});
+  items.forEach(function(el,i){ el.style.transitionDelay=(i%4*70)+'ms'; io.observe(el); });
+  // Anything already scrolled past (deep link, refresh mid-page, restored scroll) must not stay hidden.
+  function sweep(){
+    items.forEach(function(el){
+      if(el.classList.contains('in')) return;
+      if(el.getBoundingClientRect().top < window.innerHeight) show(el);
+    });
+  }
+  window.addEventListener('scroll',sweep,{passive:true});
+  window.addEventListener('load',sweep);
+  sweep();
+})();
+</script>
+</body>
+</html>

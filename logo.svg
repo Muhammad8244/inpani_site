@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-labelledby="inpaniLogoTitle">
+  <title id="inpaniLogoTitle">Inpani</title>
+  <defs>
+    <clipPath id="inpaniDrop">
+      <path d="M256,138 C300,200 330,238 330,272 A74,74 0 1 1 182,272 C182,238 212,200 256,138 Z"/>
+    </clipPath>
+  </defs>
+
+  <rect width="512" height="512" rx="116" fill="#0F4A57"/>
+
+  <g fill="none" stroke-linecap="round">
+    <path d="M132,217 A132,132 0 0 1 380,217" stroke="#F1EFE8" stroke-width="52"/>
+    <path d="M124.5,273.5 A132,132 0 0 0 233,392" stroke="#3E8E9C" stroke-width="52"/>
+    <path d="M387.5,273.5 A132,132 0 0 1 279,392" stroke="#3E8E9C" stroke-width="52"/>
+  </g>
+
+  <path d="M256,138 C300,200 330,238 330,272 A74,74 0 1 1 182,272 C182,238 212,200 256,138 Z" fill="#F1EFE8"/>
+  <path d="M180,268 C204,257 226,276 249,268 C272,260 292,254 332,269 L332,352 L180,352 Z" fill="#3E8E9C" clip-path="url(#inpaniDrop)"/>
+</svg>
