@@ -53,14 +53,21 @@ function Sync-Apks {
 }
 
 # The page states each APK's size in megabytes; a stale figure is a small lie to visitors.
+#
+# ENCODING, THE HARD WAY: `Get-Content -Raw` reads as ANSI on Windows PowerShell 5.1, and
+# `Set-Content -Encoding utf8` writes UTF-8 WITH a BOM. Using that pair double-encoded every
+# em-dash and middle dot on the page and shipped mojibake to the live site. Read and write
+# explicitly as UTF-8 without BOM instead, and match only the ASCII digits so the separator
+# characters are never touched.
 function Update-Sizes {
     $page = Join-Path $PSScriptRoot "index.html"
-    $html = Get-Content $page -Raw
+    $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+    $html = [System.IO.File]::ReadAllText($page, $utf8NoBom)
     $c = [math]::Round((Get-Item "downloads\Inpani-Customer.apk").Length / 1MB, 1)
     $d = [math]::Round((Get-Item "downloads\Inpani-Driver.apk").Length / 1MB, 1)
-    $html = [regex]::Replace($html, 'For customers . Android . [\d.]+ MB', "For customers &#183; Android &#183; $c MB")
-    $html = [regex]::Replace($html, 'For drivers . Android . [\d.]+ MB',   "For drivers &#183; Android &#183; $d MB")
-    Set-Content $page $html -Encoding utf8 -NoNewline
+    $html = [regex]::Replace($html, '(For customers[^<]*Android[^\d<]*)[\d.]+ MB', "`${1}$c MB")
+    $html = [regex]::Replace($html, '(For drivers[^<]*Android[^\d<]*)[\d.]+ MB',   "`${1}$d MB")
+    [System.IO.File]::WriteAllText($page, $html, $utf8NoBom)
 }
 
 function Get-PendingState {
