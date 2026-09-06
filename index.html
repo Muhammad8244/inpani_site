@@ -99,7 +99,7 @@
   --wrap:1140px;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;scroll-padding-top:92px}
 body{margin:0;background:#fff;color:var(--ink);
   font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
@@ -421,7 +421,7 @@ footer a:hover{color:#fff}
 
 
 <section class="road" aria-labelledby="roadCap">
-  <svg viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax slice" role="img"
+  <svg viewBox="0 0 1200 300" preserveAspectRatio="xMidYMid meet" role="img"
        aria-label="An Inpani water tanker driving along a road towards a delivery.">
     <defs>
       <clipPath id="barrel">
@@ -476,6 +476,7 @@ footer a:hover{color:#fff}
     <rect x="0" y="150" width="1200" height="76" fill="url(#haze)"/>
 
     <!-- The tanker itself: same silhouette as the app's Full Tanker icon -->
+    <g transform="translate(184,0)">
     <g class="truck">
       <!-- exhaust, drifting back from the cab -->
       <circle class="puff" cx="516" cy="176" r="7" fill="#CFEFF6"/>
@@ -501,6 +502,7 @@ footer a:hover{color:#fff}
         <circle class="wheel" cx="404" cy="248" r="8"/>
         <circle class="wheel" cx="546" cy="248" r="8"/>
       </g>
+    </g>
     </g>
   </svg>
   <p class="road-cap" id="roadCap"><b>On the way.</b> Track your tanker from the moment you accept an offer until it reaches your gate.</p>
