@@ -345,6 +345,13 @@ footer a:hover{color:#fff}
   .lyr-far,.lyr-mid,.lyr-near,.lane,.wheel,.truck,.water,.puff{animation:none}
   .puff{opacity:0}
 }
+
+/* Section transitions: the same wave that closes the hero, reused at every point where a
+   light section meets a dark one. Each wave is filled with the colour of the section BELOW
+   it, so it reads as one surface flowing into the next rather than a border. */
+.has-wave{position:relative;overflow:hidden;padding-bottom:168px}
+.has-wave>.wave{pointer-events:none}
+@media(max-width:700px){.has-wave{padding-bottom:120px}.wave{height:58px}}
 </style>
 </head>
 <body>
@@ -403,7 +410,7 @@ footer a:hover{color:#fff}
     </div>
   </div>
   <svg class="wave" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
-    <path d="M0,44 C220,96 420,4 720,34 C1010,63 1220,96 1440,52 L1440,90 L0,90 Z" fill="#fff"/>
+    <path d="M0,44 C220,96 420,4 720,34 C1010,63 1220,96 1440,52 L1440,90 L0,90 Z" fill="#CAF0F8"/>
   </svg>
 </section>
 
@@ -420,7 +427,7 @@ footer a:hover{color:#fff}
 </div>
 
 
-<section class="road" aria-labelledby="roadCap">
+<section class="road has-wave" aria-labelledby="roadCap">
   <svg viewBox="0 0 1200 300" preserveAspectRatio="xMidYMid meet" role="img"
        aria-label="An Inpani water tanker driving along a road towards a delivery.">
     <defs>
@@ -506,6 +513,9 @@ footer a:hover{color:#fff}
     </g>
   </svg>
   <p class="road-cap" id="roadCap"><b>On the way.</b> Track your tanker from the moment you accept an offer until it reaches your gate.</p>
+  <svg class="wave" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,58 C260,10 470,92 740,52 C1000,14 1230,70 1440,38 L1440,90 L0,90 Z" fill="#fff"/>
+  </svg>
 </section>
 
 <section id="how">
@@ -573,7 +583,7 @@ footer a:hover{color:#fff}
   </div>
 </section>
 
-<section id="why">
+<section id="why" class="has-wave">
   <div class="wrap">
     <div class="sec-head center rv">
       <div class="kick">Why Inpani</div>
@@ -590,9 +600,12 @@ footer a:hover{color:#fff}
         <h3>Rated drivers</h3><p>Every offer carries that driver's stars and trip count.</p></div>
     </div>
   </div>
+  <svg class="wave" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,44 C220,96 420,4 720,34 C1010,63 1220,96 1440,52 L1440,90 L0,90 Z" fill="#0F4A57"/>
+  </svg>
 </section>
 
-<section id="drivers" class="drivers">
+<section id="drivers" class="drivers has-wave">
   <div class="wrap drivers-grid">
     <div class="rv">
       <div class="kick" style="color:var(--aqua-lt);font-weight:800;letter-spacing:.09em;text-transform:uppercase;font-size:.82rem;margin-bottom:12px">For drivers</div>
@@ -618,6 +631,9 @@ footer a:hover{color:#fff}
       </div>
     </div>
   </div>
+  <svg class="wave" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,58 C260,10 470,92 740,52 C1000,14 1230,70 1440,38 L1440,90 L0,90 Z" fill="#F4FDFF"/>
+  </svg>
 </section>
 
 <section id="download" class="dlwrap">
@@ -649,7 +665,7 @@ footer a:hover{color:#fff}
   </div>
 </section>
 
-<section id="faq">
+<section id="faq" class="has-wave">
   <div class="wrap faq">
     <div class="sec-head center rv"><div class="kick">Questions</div><h2>Good to know</h2></div>
     <details class="rv"><summary>How do I pay?</summary>
@@ -674,6 +690,9 @@ footer a:hover{color:#fff}
         including your tanker size. Once it is complete you can go online and start bidding on
         nearby orders straight away.</p></details>
   </div>
+  <svg class="wave" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,44 C220,96 420,4 720,34 C1010,63 1220,96 1440,52 L1440,90 L0,90 Z" fill="#00B4D8"/>
+  </svg>
 </section>
 
 <section class="cta">
