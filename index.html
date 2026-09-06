@@ -261,6 +261,14 @@ section{padding:92px 0}
 .dl-card svg.icn{width:66px;height:66px;border-radius:17px;margin-bottom:16px}
 .dl-card .meta{color:var(--muted);font-size:.88rem;margin-bottom:14px}
 .dl-card .btn{align-self:flex-start;margin-top:auto}
+.install-help{margin-top:16px;background:#fff;border:1.5px solid #DCF0F6;border-radius:16px}
+.install-help summary{padding:18px 22px;font-weight:700;cursor:pointer;color:var(--teal);list-style:none}
+.install-help summary::-webkit-details-marker{display:none}
+.install-help>div{padding:0 22px 20px;color:var(--muted);font-size:.95rem}
+.install-help ol{margin:0 0 1em;padding-left:1.3em}
+.install-help li{margin-bottom:.5em}
+.install-help strong{color:var(--ink)}
+.install-help-note{margin:0;padding-top:12px;border-top:1px solid #E6F1F4}
 .dl-note{margin-top:26px;font-size:.93rem;color:#0A5766;background:#fff;border:1px dashed #9AD8E6;
   padding:18px 22px;border-radius:16px}
 
@@ -662,6 +670,33 @@ footer a:hover{color:#fff}
     <p class="dl-note"><strong>These are direct downloads, not Play Store apps yet.</strong>
       When you open the file, Android will ask for permission to install from your browser — allow
       it, then tap Install.</p>
+
+    <details class="install-help">
+      <summary>Phone says the app is unsafe or a threat? Read this</summary>
+      <div>
+        <p>Android warns about <em>any</em> app installed from outside the Play Store, and some
+          phones warn twice. It is a warning about where the file came from, not a virus found in
+          the app. The install can still be completed.</p>
+        <p><strong>Tecno, Infinix or itel</strong> — these run their own scanner as well as
+          Google's:</p>
+        <ol>
+          <li>On the warning, tap <strong>More</strong> or <strong>Details</strong>, then
+            <strong>Install anyway</strong>.</li>
+          <li>If it refuses, open <strong>Phone Master</strong> (or <strong>Security</strong>)
+            → <strong>Settings</strong> → turn off <strong>Scan before install</strong>, then
+            open the downloaded file again.</li>
+          <li>Also allow your browser under <strong>Settings → Apps → Special app access →
+            Install unknown apps</strong>.</li>
+        </ol>
+        <p><strong>Xiaomi, Redmi or POCO</strong> — allow installs from your browser under
+          <strong>Settings → Apps → Special app access → Install unknown apps</strong>. If the
+          screen mentions scanning, choose <strong>Install anyway</strong>.</p>
+        <p><strong>Samsung and most others</strong> — tap <strong>More details</strong> on the
+          Play Protect prompt, then <strong>Install anyway</strong>.</p>
+        <p class="install-help-note">Still stuck? Call <a href="tel:+923315242754">+92 331
+          5242754</a> and we will walk you through it.</p>
+      </div>
+    </details>
   </div>
 </section>
 
