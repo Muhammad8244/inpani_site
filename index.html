@@ -309,6 +309,42 @@ footer a:hover{color:#fff}
   .steps,.why,.sizes{grid-template-columns:1fr}
   .strip ul{gap:12px 22px}
 }
+
+/* delivery-in-motion band */
+.road{background:linear-gradient(180deg,#146C7A 0%,#17798A 42%,#0F4A57 100%);
+  overflow:hidden;position:relative;padding:0;line-height:0}
+.road svg{display:block;width:100%;height:auto}
+.road-cap{background:var(--teal);color:rgba(241,239,232,.85);text-align:center;
+  padding:18px 22px 26px;line-height:1.5;font-size:.95rem;letter-spacing:.01em}
+.road-cap b{color:#fff}
+
+/* The truck holds still and the world slides past it: one transform per layer, which the
+   compositor can handle on its own without touching layout on any frame. */
+@keyframes road-pan{from{transform:translateX(0)}to{transform:translateX(-600px)}}
+@keyframes road-dash{to{stroke-dashoffset:-240}}
+@keyframes wheel-spin{to{transform:rotate(-360deg)}}
+@keyframes truck-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.6px)}}
+@keyframes slosh{0%,100%{transform:translateX(0)}50%{transform:translateX(-5px)}}
+@keyframes puff{0%{opacity:.42;transform:translate(0,0) scale(.7)}
+  100%{opacity:0;transform:translate(-46px,-13px) scale(1.9)}}
+
+.lyr-far{animation:road-pan 22s linear infinite}
+.lyr-mid{animation:road-pan 11s linear infinite}
+.lyr-near{animation:road-pan 5s linear infinite}
+.lane{animation:road-dash 1.1s linear infinite}
+.wheel{transform-box:fill-box;transform-origin:center;animation:wheel-spin .62s linear infinite}
+.truck{animation:truck-bob 1.15s ease-in-out infinite}
+.water{animation:slosh 2.6s ease-in-out infinite}
+.puff{animation:puff 1.5s ease-out infinite}
+.puff:nth-of-type(2){animation-delay:.5s}
+.puff:nth-of-type(3){animation-delay:1s}
+
+/* Motion here is decoration, and for anyone prone to motion sickness a scrolling scene is
+   genuinely unpleasant. Honour the OS setting: the scene stays, the movement stops. */
+@media(prefers-reduced-motion:reduce){
+  .lyr-far,.lyr-mid,.lyr-near,.lane,.wheel,.truck,.water,.puff{animation:none}
+  .puff{opacity:0}
+}
 </style>
 </head>
 <body>
@@ -382,6 +418,93 @@ footer a:hover{color:#fff}
     </ul>
   </div>
 </div>
+
+
+<section class="road" aria-labelledby="roadCap">
+  <svg viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax slice" role="img"
+       aria-label="An Inpani water tanker driving along a road towards a delivery.">
+    <defs>
+      <clipPath id="barrel">
+        <rect x="286" y="150" width="196" height="74" rx="37"/>
+      </clipPath>
+      <linearGradient id="haze" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#1B8296" stop-opacity="0"/>
+        <stop offset="1" stop-color="#0F4A57" stop-opacity=".55"/>
+      </linearGradient>
+    </defs>
+
+    <!-- Each moving layer is two identical 600-wide tiles side by side; panning exactly one
+         tile width and looping makes the seam land where the next tile already is. -->
+    <g class="lyr-far" opacity=".33" fill="#8FD6E4">
+      <g id="far">
+        <rect x="40" y="150" width="34" height="66"/><rect x="84" y="128" width="26" height="88"/>
+        <rect x="120" y="162" width="44" height="54"/><rect x="196" y="140" width="30" height="76"/>
+        <rect x="236" y="168" width="52" height="48"/><rect x="330" y="134" width="28" height="82"/>
+        <rect x="368" y="158" width="40" height="58"/><rect x="440" y="146" width="32" height="70"/>
+        <rect x="486" y="170" width="48" height="46"/>
+      </g>
+      <use href="#far" x="600"/><use href="#far" x="1200"/>
+    </g>
+
+    <g class="lyr-mid" opacity=".5" fill="#0C3F4B">
+      <g id="mid">
+        <rect x="18" y="176" width="58" height="42" rx="3"/>
+        <rect x="150" y="164" width="40" height="54" rx="3"/>
+        <path d="M262 218v-40l26-16 26 16v40Z"/>
+        <rect x="392" y="172" width="52" height="46" rx="3"/>
+        <circle cx="520" cy="196" r="19"/><rect x="516" y="196" width="8" height="22"/>
+      </g>
+      <use href="#mid" x="600"/><use href="#mid" x="1200"/>
+    </g>
+
+    <!-- Road -->
+    <rect x="0" y="216" width="1200" height="84" fill="#123C46"/>
+    <rect x="0" y="216" width="1200" height="5" fill="#1C5B69"/>
+    <line class="lane" x1="0" y1="262" x2="1200" y2="262" stroke="#EAF7FA" stroke-opacity=".62"
+          stroke-width="5" stroke-dasharray="46 34" stroke-linecap="round"/>
+
+    <!-- Roadside markers, nearest layer so they slide fastest -->
+    <g class="lyr-near" fill="#9FE0EC" opacity=".55">
+      <g id="near">
+        <rect x="60" y="200" width="5" height="18" rx="2"/>
+        <rect x="260" y="200" width="5" height="18" rx="2"/>
+        <rect x="460" y="200" width="5" height="18" rx="2"/>
+      </g>
+      <use href="#near" x="600"/><use href="#near" x="1200"/>
+    </g>
+
+    <rect x="0" y="150" width="1200" height="76" fill="url(#haze)"/>
+
+    <!-- The tanker itself: same silhouette as the app's Full Tanker icon -->
+    <g class="truck">
+      <!-- exhaust, drifting back from the cab -->
+      <circle class="puff" cx="516" cy="176" r="7" fill="#CFEFF6"/>
+      <circle class="puff" cx="516" cy="176" r="6" fill="#CFEFF6"/>
+      <circle class="puff" cx="516" cy="176" r="5" fill="#CFEFF6"/>
+
+      <rect x="286" y="150" width="196" height="74" rx="37" fill="#0288A6"/>
+      <g clip-path="url(#barrel)">
+        <path class="water" d="M270 176c26-11 52 9 78 0s52-13 78 0 52 9 78 0v58H270Z" fill="#48CAE4" opacity=".55"/>
+      </g>
+      <rect x="286" y="150" width="196" height="74" rx="37" fill="none" stroke="#0B3844" stroke-width="4"/>
+      <rect x="352" y="136" width="42" height="16" rx="3" fill="#0B3844"/>
+      <path d="M494 224v-58q0-14 14-14h44l40 40v32Z" fill="#0F4A57"/>
+      <path d="M516 172h34l28 28h-62Z" fill="#B3E5EF"/>
+      <rect x="240" y="222" width="352" height="16" rx="4" fill="#0B3844"/>
+      <g fill="#08262E">
+        <circle class="wheel" cx="330" cy="248" r="24"/>
+        <circle class="wheel" cx="404" cy="248" r="24"/>
+        <circle class="wheel" cx="546" cy="248" r="24"/>
+      </g>
+      <g fill="#7FB8C4">
+        <circle class="wheel" cx="330" cy="248" r="8"/>
+        <circle class="wheel" cx="404" cy="248" r="8"/>
+        <circle class="wheel" cx="546" cy="248" r="8"/>
+      </g>
+    </g>
+  </svg>
+  <p class="road-cap" id="roadCap"><b>On the way.</b> Track your tanker from the moment you accept an offer until it reaches your gate.</p>
+</section>
 
 <section id="how">
   <div class="wrap">
