@@ -365,7 +365,7 @@ onAuthStateChanged(auth, async user => {
 });
 
 /* ── live data ──────────────────────────────────────────── */
-const state = { orders:[], customers:[], drivers:[], locations:{}, blocked:{}, tickets:[] };
+const state = { orders:[], customers:[], drivers:[], locations:{}, blocked:{}, tickets:[], roles:{} };
 const asList = snap => { const v = snap.val() || {}; return Object.entries(v).map(([id,o]) => ({ id, ...(o&&typeof o==="object"?o:{value:o}) })); };
 
 function subscribe(){
@@ -375,6 +375,9 @@ function subscribe(){
   onValue(ref(db,"driverLocations"),  s => { state.locations = s.val() || {}; refresh(); });
   onValue(ref(db,"blocked"),          s => { state.blocked   = s.val() || {}; refresh(); }, () => {});
   onValue(ref(db,"supportTickets"),   s => { state.tickets   = asList(s); refresh(); }, () => {});
+  // "roles" is written the first time any user opens either app, so it catches people who
+  // signed in but never finished a profile — they would otherwise be invisible here.
+  onValue(ref(db,"roles"),            s => { state.roles     = s.val() || {}; refresh(); }, () => {});
 }
 
 let pending = false;
@@ -605,7 +608,15 @@ function blockButton(uid){
 
 function renderPeople(kind){
   const isDriver = kind === "drivers";
-  const list  = isDriver ? state.drivers : state.customers;
+  const profiles = isDriver ? state.drivers : state.customers;
+  const roleKey  = isDriver ? "driver" : "customer";
+  const known    = new Set(profiles.map(p => p.id));
+  // Signed in at least once, never completed a profile. Still real users, still blockable.
+  const ghosts = Object.entries(state.roles)
+    .filter(([uid,r]) => r && r[roleKey] && !known.has(uid))
+    .map(([uid,r]) => ({ id:uid, name:"", phone:"", email:"", address:"",
+                         registeredAt: Number(r[roleKey])||0, noProfile:true }));
+  const list = profiles.concat(ghosts);
   const q = ($( isDriver ? "#qDrivers" : "#qCustomers").value||"").toLowerCase().trim();
   const shown = list.slice()
     .sort((a,b)=>(Number(b.registeredAt)||0)-(Number(a.registeredAt)||0))
@@ -620,7 +631,8 @@ function renderPeople(kind){
     if (isBlocked(p.id)) tr.className = "blocked-row";
 
     const nameCell = el("td");
-    nameCell.textContent = p.name || "(no name)";
+    nameCell.textContent = p.name || (p.noProfile ? "(signed in, no profile yet)" : "(no name)");
+    if (p.noProfile) nameCell.style.color = "var(--text-muted)";
     if (isBlocked(p.id)){
       const t = el("span","tag-blocked"); t.textContent = "  BLOCKED"; nameCell.append(t);
     }
@@ -646,8 +658,10 @@ function renderPeople(kind){
 
   const host = $( isDriver ? "#driversTable" : "#customersTable");
   host.innerHTML = ""; host.append(table(heads, rows));
+  const ghostShown = shown.filter(p => p.noProfile).length;
   $( isDriver ? "#driversCount" : "#customersCount").textContent =
-    `${num(shown.length)} of ${num(list.length)}`;
+    `${num(shown.length)} of ${num(list.length)}`
+    + (ghostShown ? ` · ${num(ghostShown)} signed in without finishing a profile` : "");
 }
 const renderCustomers = () => renderPeople("customers");
 const renderDrivers   = () => renderPeople("drivers");
