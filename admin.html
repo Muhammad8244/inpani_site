@@ -1,0 +1,869 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>Inpani Admin</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="/icon-96.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0F4A57">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  color-scheme: light;
+  --bg:#eef3f5;
+  --surface-1:#ffffff;
+  --surface-2:#f6f9fa;
+  --surface-3:#eaf1f3;
+  --border:#dde8ec;
+  --border-strong:#c6d8de;
+  --text-primary:#0B2B33;
+  --text-secondary:#456a74;
+  --text-muted:#6b8892;
+  --brand-ink:#0F4A57;
+  --accent:#00B4D8;
+  --sidebar-bg:#0F4A57;
+  --sidebar-ink:#cfe6ec;
+  --sidebar-active:rgba(255,255,255,.14);
+  --series-1:#0F4A57;
+  --good:#0ca30c;
+  --warning:#fab219;
+  --serious:#ec835a;
+  --critical:#d03b3b;
+  --shadow-sm:0 1px 2px rgba(11,43,51,.05);
+  --shadow:0 1px 2px rgba(11,43,51,.05),0 6px 20px -6px rgba(11,43,51,.12);
+  --radius:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root:where(:not([data-theme="light"])){
+    color-scheme: dark;
+    --bg:#0c1519; --surface-1:#16232a; --surface-2:#1b2b33; --surface-3:#223640;
+    --border:#294049; --border-strong:#375059;
+    --text-primary:#EAF4F6; --text-secondary:#A9C3CB; --text-muted:#8ba6b0;
+    --brand-ink:#5BC8DE; --accent:#5BC8DE;
+    --sidebar-bg:#0c1f26; --sidebar-ink:#a9c3cb; --sidebar-active:rgba(255,255,255,.10);
+    --series-1:#5BC8DE;
+    --shadow-sm:0 1px 2px rgba(0,0,0,.35);
+    --shadow:0 1px 2px rgba(0,0,0,.35),0 6px 20px -6px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --bg:#0c1519; --surface-1:#16232a; --surface-2:#1b2b33; --surface-3:#223640;
+  --border:#294049; --border-strong:#375059;
+  --text-primary:#EAF4F6; --text-secondary:#A9C3CB; --text-muted:#8ba6b0;
+  --brand-ink:#5BC8DE; --accent:#5BC8DE;
+  --sidebar-bg:#0c1f26; --sidebar-ink:#a9c3cb; --sidebar-active:rgba(255,255,255,.10);
+  --series-1:#5BC8DE;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.35);
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 6px 20px -6px rgba(0,0,0,.5);
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  background:var(--bg); color:var(--text-primary);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{margin:0;letter-spacing:-.015em}
+button{font-family:inherit}
+
+.gate-wrap{min-height:100vh;display:grid;place-items:center;padding:24px;
+  background:radial-gradient(1200px 600px at 50% -10%, rgba(0,180,216,.16), transparent 60%),var(--bg)}
+.gate{width:100%;max-width:420px;padding:36px 30px;background:var(--surface-1);
+  border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow);text-align:center}
+.gate h1{font-size:1.35rem;font-weight:700;margin-bottom:6px}
+.gate p{color:var(--text-secondary);font-size:.92rem;margin:0 0 22px}
+.gate .mark{width:60px;height:60px;border-radius:16px;margin:0 auto 16px;display:block}
+
+#app{display:grid;grid-template-columns:1fr;min-height:100vh}
+@media (min-width:1000px){ #app{grid-template-columns:250px 1fr} }
+
+aside{background:var(--sidebar-bg);color:var(--sidebar-ink);display:none;flex-direction:column;
+  padding:20px 14px;position:sticky;top:0;height:100vh}
+@media (min-width:1000px){ aside{display:flex} }
+aside .brand{display:flex;align-items:center;gap:11px;padding:0 8px 22px;color:#fff}
+aside .brand svg{width:34px;height:34px;border-radius:9px;flex:none}
+aside .brand b{font-size:1.05rem;font-weight:700}
+aside nav{display:flex;flex-direction:column;gap:3px}
+aside nav button{display:flex;align-items:center;gap:11px;width:100%;text-align:left;cursor:pointer;
+  background:none;border:none;color:var(--sidebar-ink);font-size:.92rem;font-weight:500;
+  padding:10px 12px;border-radius:10px;transition:background .14s,color .14s}
+aside nav button svg{width:18px;height:18px;flex:none;opacity:.85}
+aside nav button:hover{background:rgba(255,255,255,.07);color:#fff}
+aside nav button[aria-selected="true"]{background:var(--sidebar-active);color:#fff;font-weight:600}
+aside .side-foot{margin-top:auto;padding:14px 10px 0;border-top:1px solid rgba(255,255,255,.12);
+  font-size:.76rem;color:var(--sidebar-ink);opacity:.8;line-height:1.45;word-break:break-all}
+
+main{min-width:0;display:flex;flex-direction:column}
+.topbar{position:sticky;top:0;z-index:30;background:var(--surface-1);
+  border-bottom:1px solid var(--border);padding:12px 18px;display:flex;align-items:center;gap:12px}
+.topbar .m-brand{display:flex;align-items:center;gap:9px;font-weight:700}
+.topbar .m-brand svg{width:26px;height:26px;border-radius:7px}
+@media (min-width:1000px){ .topbar .m-brand{display:none} }
+.topbar h1{font-size:1.02rem;font-weight:650;display:none}
+@media (min-width:1000px){ .topbar h1{display:block} }
+.topbar .sp{flex:1}
+.topbar .who{font-size:.82rem;color:var(--text-muted);display:none}
+@media (min-width:700px){ .topbar .who{display:block} }
+
+.btn{font:inherit;font-weight:600;font-size:.86rem;cursor:pointer;border-radius:10px;
+  padding:8px 15px;border:1px solid transparent;background:var(--accent);color:#04303a;
+  transition:filter .14s,background .14s}
+.btn:hover{filter:brightness(1.06)}
+.btn.ghost{background:var(--surface-2);border-color:var(--border);color:var(--text-secondary)}
+.btn.ghost:hover{background:var(--surface-3);color:var(--text-primary)}
+.btn.sm{padding:6px 11px;font-size:.8rem;border-radius:8px}
+.btn.icon{padding:7px;width:33px;height:33px;display:grid;place-items:center}
+.btn.icon svg{width:16px;height:16px}
+.btn:disabled{opacity:.5;cursor:default}
+
+.mtabs{display:flex;gap:2px;overflow-x:auto;padding:0 12px;background:var(--surface-1);
+  border-bottom:1px solid var(--border);scrollbar-width:none;position:sticky;top:57px;z-index:29}
+.mtabs::-webkit-scrollbar{display:none}
+@media (min-width:1000px){ .mtabs{display:none} }
+.mtabs button{font:inherit;font-weight:600;font-size:.88rem;white-space:nowrap;cursor:pointer;
+  background:none;border:none;border-bottom:2.5px solid transparent;color:var(--text-muted);
+  padding:11px 13px;margin-bottom:-1px}
+.mtabs button[aria-selected="true"]{color:var(--brand-ink);border-bottom-color:var(--brand-ink)}
+
+.content{padding:20px 18px 64px;max-width:1340px;width:100%}
+@media (min-width:1000px){ .content{padding:26px 28px 72px} }
+.page-head{margin-bottom:18px}
+.page-head h2{font-size:1.32rem;font-weight:700}
+.page-head p{margin:3px 0 0;color:var(--text-muted);font-size:.87rem}
+
+.kpis{display:grid;gap:13px;grid-template-columns:repeat(auto-fit,minmax(196px,1fr));margin-bottom:20px}
+.kpi{background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius);
+  padding:16px 17px;box-shadow:var(--shadow-sm)}
+.kpi .ico{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;margin-bottom:11px;
+  background:var(--surface-3);color:var(--brand-ink)}
+.kpi .ico svg{width:17px;height:17px}
+.kpi .lab{font-size:.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.kpi .val{font-size:1.85rem;font-weight:750;line-height:1.1;margin-top:4px;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.kpi .sub{font-size:.79rem;color:var(--text-secondary);margin-top:3px}
+
+.card{background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow-sm);margin-bottom:18px;overflow:hidden}
+.card-head{padding:16px 18px 0}
+.card-head h3{font-size:1rem;font-weight:650}
+.card-head p{margin:3px 0 0;color:var(--text-muted);font-size:.82rem}
+.card-body{padding:16px 18px}
+.card-body.flush{padding:14px 0 0}
+
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;align-items:center;padding:14px 18px 4px}
+input[type=search],select{font:inherit;font-size:.87rem;padding:8px 12px;border-radius:10px;
+  border:1px solid var(--border-strong);background:var(--surface-1);color:var(--text-primary);
+  transition:border-color .14s,box-shadow .14s}
+input[type=search]:focus,select:focus{outline:none;border-color:var(--accent);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
+input[type=search]{min-width:200px;flex:1}
+
+.tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:.865rem}
+th,td{text-align:left;padding:11px 14px;white-space:nowrap;vertical-align:middle;
+  border-bottom:1px solid var(--border)}
+th{color:var(--text-muted);font-weight:600;font-size:.735rem;text-transform:uppercase;
+  letter-spacing:.055em;position:sticky;top:0;background:var(--surface-2);z-index:2}
+tbody tr:nth-child(even){background:var(--surface-2)}
+tbody tr:hover{background:var(--surface-3)}
+tbody tr:last-child td{border-bottom:none}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+td.wrap{white-space:normal;min-width:200px;line-height:1.4}
+td .muted{color:var(--text-muted)}
+.person{display:flex;align-items:center;gap:10px}
+.avatar{width:30px;height:30px;border-radius:50%;flex:none;display:grid;place-items:center;
+  background:var(--surface-3);color:var(--brand-ink);font-size:.74rem;font-weight:700}
+.person .nm{font-weight:600}
+.person .nm.none{font-weight:500;color:var(--text-muted);font-style:italic}
+
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:.735rem;font-weight:700;
+  padding:3px 9px;border-radius:999px;border:1px solid}
+.chip .dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex:none}
+.s-delivered{color:var(--good);border-color:color-mix(in srgb,var(--good) 42%,transparent);
+  background:color-mix(in srgb,var(--good) 9%,transparent)}
+.s-pending{color:#8a6100;border-color:color-mix(in srgb,var(--warning) 55%,transparent);
+  background:color-mix(in srgb,var(--warning) 15%,transparent)}
+.s-accepted,.s-on_the_way{color:#a14a20;border-color:color-mix(in srgb,var(--serious) 50%,transparent);
+  background:color-mix(in srgb,var(--serious) 13%,transparent)}
+.s-cancelled,.s-expired{color:var(--critical);border-color:color-mix(in srgb,var(--critical) 42%,transparent);
+  background:color-mix(in srgb,var(--critical) 9%,transparent)}
+.s-other{color:var(--text-muted);border-color:var(--border-strong);background:var(--surface-2)}
+:root[data-theme="dark"] .s-pending{color:#f5c95e}
+:root[data-theme="dark"] .s-accepted,:root[data-theme="dark"] .s-on_the_way{color:#f0a682}
+@media (prefers-color-scheme: dark){
+  :root:where(:not([data-theme="light"])) .s-pending{color:#f5c95e}
+  :root:where(:not([data-theme="light"])) .s-accepted,
+  :root:where(:not([data-theme="light"])) .s-on_the_way{color:#f0a682}
+}
+
+.pill{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.04em;padding:2px 7px;
+  border-radius:6px;background:color-mix(in srgb,var(--critical) 13%,transparent);color:var(--critical)}
+.blocked-row td{opacity:.6}
+.online{display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:.82rem}
+.online .dot{width:7px;height:7px;border-radius:50%;background:var(--good)}
+.offline{color:var(--text-muted);font-size:.82rem}
+
+figure.chart{margin:0}
+figure.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.bar{fill:var(--series-1)}
+.bar-hit{fill:transparent;cursor:pointer}
+.gridline{stroke:var(--border);stroke-width:1}
+.axis-text{fill:var(--text-muted);font-size:10.5px;font-family:Inter,sans-serif;font-weight:500}
+#tip{position:fixed;z-index:60;pointer-events:none;opacity:0;transition:opacity .1s;
+  background:var(--text-primary);color:var(--surface-1);font-size:.78rem;font-weight:600;
+  padding:6px 10px;border-radius:8px;white-space:nowrap;transform:translate(-50%,-140%);
+  box-shadow:0 4px 14px rgba(0,0,0,.2)}
+
+.empty{color:var(--text-muted);font-size:.9rem;padding:34px 18px;text-align:center}
+.empty b{display:block;color:var(--text-secondary);font-size:.95rem;margin-bottom:4px}
+.note{display:flex;gap:11px;align-items:flex-start;background:var(--surface-2);
+  border:1px solid var(--border);border-left:3px solid var(--accent);
+  border-radius:10px;padding:13px 15px;font-size:.855rem;color:var(--text-secondary);margin:0 0 18px}
+.note svg{width:17px;height:17px;flex:none;margin-top:1px;color:var(--accent)}
+.note b{color:var(--text-primary);font-weight:650}
+.err{color:var(--critical);font-size:.86rem;margin-top:12px}
+.hide{display:none !important}
+</style>
+
+<div id="tip" role="status" aria-live="polite"></div>
+
+<svg class="hide"><defs>
+  <g id="i-grid"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></g>
+  <g id="i-box"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></g>
+  <g id="i-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <g id="i-truck"><path d="M10 17h4V5H2v12h3M14 9h4l3 3v5h-2M7 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM17 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <g id="i-life"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4.9 4.9l4.2 4.2M14.9 14.9l4.2 4.2M14.9 9.1l4.2-4.2M4.9 19.1l4.2-4.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></g>
+  <g id="i-check"><path d="M22 11.1V12a10 10 0 1 1-5.9-9.1M22 4 12 14l-3-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <g id="i-cash"><path d="M2 7h20v10H2zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></g>
+  <g id="i-avg"><path d="M3 3v18h18M7 15l4-4 3 3 5-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <g id="i-info"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 16v-4M12 8h.01" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></g>
+  <g id="i-moon"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></g>
+  <g id="i-logo"><rect width="512" height="512" rx="116" fill="#0F4A57"/><g fill="none" stroke-linecap="round"><path d="M132,217 A132,132 0 0 1 380,217" stroke="#F1EFE8" stroke-width="52"/><path d="M124.5,273.5 A132,132 0 0 0 233,392" stroke="#3E8E9C" stroke-width="52"/><path d="M387.5,273.5 A132,132 0 0 1 279,392" stroke="#3E8E9C" stroke-width="52"/></g><path d="M256,138 C300,200 330,238 330,272 A74,74 0 1 1 182,272 C182,238 212,200 256,138 Z" fill="#F1EFE8"/></g>
+</defs></svg>
+
+<div id="gateWrap" class="gate-wrap">
+  <section class="gate">
+    <svg class="mark" viewBox="0 0 512 512" aria-hidden="true"><use href="#i-logo"/></svg>
+    <h1>Inpani Admin</h1>
+    <p id="gateMsg">Sign in with an Inpani owner account.</p>
+    <button class="btn" id="signin">Sign in with Google</button>
+    <div id="gateExtra"></div>
+  </section>
+</div>
+
+<div id="app" class="hide">
+  <aside>
+    <div class="brand">
+      <svg viewBox="0 0 512 512" aria-hidden="true"><use href="#i-logo"/></svg>
+      <b>Inpani Admin</b>
+    </div>
+    <nav role="tablist">
+      <button role="tab" aria-selected="true"  data-tab="overview"><svg viewBox="0 0 24 24"><use href="#i-grid"/></svg>Overview</button>
+      <button role="tab" aria-selected="false" data-tab="orders"><svg viewBox="0 0 24 24"><use href="#i-box"/></svg>Orders</button>
+      <button role="tab" aria-selected="false" data-tab="customers"><svg viewBox="0 0 24 24"><use href="#i-users"/></svg>Customers</button>
+      <button role="tab" aria-selected="false" data-tab="drivers"><svg viewBox="0 0 24 24"><use href="#i-truck"/></svg>Drivers</button>
+      <button role="tab" aria-selected="false" data-tab="support"><svg viewBox="0 0 24 24"><use href="#i-life"/></svg>Support</button>
+    </nav>
+    <div class="side-foot"><span id="whoSide"></span><br><span id="stamp"></span></div>
+  </aside>
+
+  <main>
+    <div class="topbar">
+      <span class="m-brand"><svg viewBox="0 0 512 512"><use href="#i-logo"/></svg>Inpani Admin</span>
+      <h1 id="pageTitle">Overview</h1>
+      <span class="sp"></span>
+      <span class="who" id="who"></span>
+      <button class="btn ghost icon" id="theme" title="Light / dark" aria-label="Toggle theme"><svg viewBox="0 0 24 24"><use href="#i-moon"/></svg></button>
+      <button class="btn ghost sm" id="signout">Sign out</button>
+    </div>
+
+    <div class="mtabs" role="tablist">
+      <button role="tab" aria-selected="true"  data-tab="overview">Overview</button>
+      <button role="tab" aria-selected="false" data-tab="orders">Orders</button>
+      <button role="tab" aria-selected="false" data-tab="customers">Customers</button>
+      <button role="tab" aria-selected="false" data-tab="drivers">Drivers</button>
+      <button role="tab" aria-selected="false" data-tab="support">Support</button>
+    </div>
+
+    <div class="content">
+      <section data-panel="overview">
+        <div class="page-head"><h2>Overview</h2><p>Live from the Inpani database.</p></div>
+        <div class="kpis" id="kpis"></div>
+
+        <div class="card">
+          <div class="card-head"><h3>Orders per day</h3><p>Last 30 days. Hover a bar for the exact count.</p></div>
+          <div class="card-body">
+            <figure class="chart" id="chart"></figure>
+            <div style="margin-top:12px"><button class="btn ghost sm" id="toggleData">Show data table</button></div>
+            <div class="tablewrap hide" id="chartData" style="margin-top:12px"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>Order status breakdown</h3><p>Every order ever placed, by state.</p></div>
+          <div class="card-body flush"><div class="tablewrap" id="statusTable"></div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>Records for investors</h3><p>Downloads a spreadsheet you can open in Excel.</p></div>
+          <div class="card-body">
+            <div style="display:flex;gap:9px;flex-wrap:wrap">
+              <button class="btn sm" data-csv="summary">Summary</button>
+              <button class="btn ghost sm" data-csv="orders">Orders</button>
+              <button class="btn ghost sm" data-csv="customers">Customers</button>
+              <button class="btn ghost sm" data-csv="drivers">Drivers</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section data-panel="orders" class="hide">
+        <div class="page-head"><h2>Orders</h2><p id="ordersCount"></p></div>
+        <div class="card">
+          <div class="toolbar">
+            <input type="search" id="qOrders" placeholder="Search address, customer, driver, price…">
+            <select id="fStatus">
+              <option value="">All statuses</option>
+              <option>PENDING</option><option>ACCEPTED</option><option>ON_THE_WAY</option>
+              <option>DELIVERED</option><option>CANCELLED</option><option>EXPIRED</option>
+            </select>
+            <button class="btn ghost sm" data-csv="orders">Download CSV</button>
+          </div>
+          <div class="card-body flush"><div class="tablewrap" id="ordersTable"></div></div>
+        </div>
+      </section>
+
+      <section data-panel="customers" class="hide">
+        <div class="page-head"><h2>Customers</h2><p id="customersCount"></p></div>
+        <div id="customerNote"></div>
+        <div class="card">
+          <div class="toolbar">
+            <input type="search" id="qCustomers" placeholder="Search name, phone, email, address…">
+            <button class="btn ghost sm" data-csv="customers">Download CSV</button>
+          </div>
+          <div class="card-body flush"><div class="tablewrap" id="customersTable"></div></div>
+        </div>
+      </section>
+
+      <section data-panel="drivers" class="hide">
+        <div class="page-head"><h2>Drivers</h2><p id="driversCount"></p></div>
+        <div class="card">
+          <div class="toolbar">
+            <input type="search" id="qDrivers" placeholder="Search name, phone, email, vehicle…">
+            <button class="btn ghost sm" data-csv="drivers">Download CSV</button>
+          </div>
+          <div class="card-body flush"><div class="tablewrap" id="driversTable"></div></div>
+        </div>
+      </section>
+
+      <section data-panel="support" class="hide">
+        <div class="page-head"><h2>Support tickets</h2><p id="supportCount"></p></div>
+        <div class="card"><div class="card-body flush"><div class="tablewrap" id="supportTable"></div></div></div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getDatabase, ref, onValue, set, remove }
+  from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+// Mirrors database.rules.json. The rules are the real enforcement — this list only
+// keeps a non-admin from seeing an empty shell full of permission errors.
+const ADMIN_EMAILS = ["bilalaarian000@gmail.com", "manich.ch@gmail.com"];
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC7IUTLSs9FZ5flIpYJXUIAUgljjBPOj-Q",
+  authDomain: "customer-4aeda.firebaseapp.com",
+  databaseURL: "https://customer-4aeda-default-rtdb.firebaseio.com",
+  projectId: "customer-4aeda",
+  storageBucket: "customer-4aeda.firebasestorage.app",
+  messagingSenderId: "1035345709906"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getDatabase(app);
+
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const el = (t,c) => { const n=document.createElement(t); if(c) n.className=c; return n; };
+const NS = "http://www.w3.org/2000/svg";
+const icon = id => { const s=document.createElementNS(NS,"svg");
+  s.setAttribute("viewBox","0 0 24 24");
+  const u=document.createElementNS(NS,"use"); u.setAttribute("href","#"+id);
+  s.append(u); return s; };
+
+try{ const t=localStorage.getItem("inpani-admin-theme"); if(t) document.documentElement.dataset.theme=t; }catch{}
+$("#theme").onclick = () => {
+  const cur = document.documentElement.dataset.theme
+    || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  const next = cur === "dark" ? "light" : "dark";
+  document.documentElement.dataset.theme = next;
+  try{ localStorage.setItem("inpani-admin-theme", next); }catch{}
+  renderAll();
+};
+
+$("#signin").onclick = async () => {
+  try { await signInWithPopup(auth, new GoogleAuthProvider()); }
+  catch(e){
+    const box=$("#gateExtra"); box.innerHTML="";
+    const p=el("p","err");
+    p.textContent = e && e.code === "auth/unauthorized-domain"
+      ? "This website address is not allowed in Firebase yet. Add it under Authentication → Settings → Authorized domains."
+      : "Could not sign in: " + ((e && (e.code || e.message)) || e);
+    box.append(p);
+  }
+};
+$("#signout").onclick = () => signOut(auth);
+
+onAuthStateChanged(auth, user => {
+  if (!user){ $("#gateWrap").classList.remove("hide"); $("#app").classList.add("hide"); return; }
+  const email = (user.email || "").toLowerCase();
+  if (!(user.emailVerified && ADMIN_EMAILS.includes(email))){
+    $("#gateMsg").textContent = "This account cannot open Inpani Admin.";
+    const box=$("#gateExtra"); box.innerHTML="";
+    const p=el("p"); p.style.cssText="font-size:.86rem;color:var(--text-secondary);margin:0 0 14px";
+    p.textContent = (user.email || "This account") + " is not an Inpani owner account. "
+      + "The database refuses it too, not just this page.";
+    const o=el("button","btn ghost sm"); o.textContent="Sign out"; o.onclick=()=>signOut(auth);
+    box.append(p,o); $("#signin").classList.add("hide");
+    return;
+  }
+  $("#gateWrap").classList.add("hide");
+  $("#app").classList.remove("hide");
+  $("#who").textContent = user.email;
+  $("#whoSide").textContent = user.email;
+  subscribe();
+});
+
+const state = { orders:[], customers:[], drivers:[], locations:{}, blocked:{}, tickets:[], roles:{} };
+const asList = snap => { const v = snap.val() || {};
+  return Object.entries(v).map(([id,o]) => ({ id, ...(o && typeof o === "object" ? o : {value:o}) })); };
+
+function subscribe(){
+  const quiet = () => {};
+  onValue(ref(db,"orders"),           s => { state.orders    = asList(s); renderAll(); }, quiet);
+  onValue(ref(db,"customerProfiles"), s => { state.customers = asList(s); renderAll(); }, quiet);
+  onValue(ref(db,"driverProfiles"),   s => { state.drivers   = asList(s); renderAll(); }, quiet);
+  onValue(ref(db,"driverLocations"),  s => { state.locations = s.val() || {}; renderAll(); }, quiet);
+  onValue(ref(db,"blocked"),          s => { state.blocked   = s.val() || {}; renderAll(); }, quiet);
+  onValue(ref(db,"supportTickets"),   s => { state.tickets   = asList(s); renderAll(); }, quiet);
+  // Written the first time any user opens either app — catches people who signed in
+  // but never completed a profile, who would otherwise be invisible here.
+  onValue(ref(db,"roles"),            s => { state.roles     = s.val() || {}; renderAll(); }, quiet);
+}
+
+let queued = false;
+function renderAll(){
+  if (queued) return;
+  queued = true;
+  requestAnimationFrame(() => {
+    queued = false;
+    renderOverview(); renderOrders(); renderPeople("customers"); renderPeople("drivers"); renderSupport();
+    $("#stamp").textContent = "updated " + new Date().toLocaleTimeString();
+  });
+}
+
+const num   = n => (Number(n)||0).toLocaleString("en-PK");
+const rs    = n => "Rs " + Math.round(Number(n)||0).toLocaleString("en-PK");
+const dt    = ms => ms ? new Date(Number(ms)).toLocaleString("en-GB",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}) : "—";
+const dOnly = ms => ms ? new Date(Number(ms)).toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}) : "—";
+const dash  = v => (v===undefined||v===null||v==="") ? "—" : String(v);
+const isBlocked = uid => Object.prototype.hasOwnProperty.call(state.blocked, uid);
+
+/**
+ * Everyone we have any evidence of, not just those with a saved profile.
+ * The customer app has no registration screen, so `customerProfiles` can be empty
+ * while real customers exist in `orders` and `roles`.
+ */
+function people(kind){
+  const isDriver = kind === "drivers";
+  const profiles = isDriver ? state.drivers : state.customers;
+  const byId = new Map(profiles.map(p => [p.id, p]));
+  const roleKey = isDriver ? "driver" : "customer";
+
+  const ids = new Set(byId.keys());
+  Object.entries(state.roles).forEach(([uid,r]) => { if (r && r[roleKey]) ids.add(uid); });
+  state.orders.forEach(o => { const u = isDriver ? o.driverId : o.customerId; if (u) ids.add(u); });
+  if (isDriver) Object.keys(state.locations).forEach(u => ids.add(u));
+
+  return Array.from(ids).map(uid => {
+    const p = byId.get(uid) || {};
+    const mine = state.orders.filter(o => (isDriver ? o.driverId : o.customerId) === uid);
+    const done = mine.filter(o => o.status === "DELIVERED");
+    const sorted = mine.slice().sort((a,b)=>(Number(b.timestamp)||0)-(Number(a.timestamp)||0));
+    const roleAt = state.roles[uid] && Number(state.roles[uid][roleKey]);
+    const firstOrder = mine.length ? Math.min(...mine.map(o => Number(o.timestamp)||Infinity)) : 0;
+    const joined = Number(p.registeredAt) || roleAt || (isFinite(firstOrder) ? firstOrder : 0);
+    return {
+      id: uid, hasProfile: byId.has(uid),
+      name: p.name || "", phone: p.phone || "", email: p.email || "",
+      vehicleNumber: p.vehicleNumber || "", capacity: p.capacity || "", rating: p.rating,
+      address: p.address || (sorted[0] ? sorted[0].address : ""),
+      addressFromOrder: !p.address && !!(sorted[0] && sorted[0].address),
+      orders: mine.length, delivered: done.length,
+      value: done.reduce((s,o)=>s+(Number(o.price)||0),0),
+      lastSeen: sorted[0] ? Number(sorted[0].timestamp)||0 : 0,
+      joined
+    };
+  });
+}
+
+function statusChip(s){
+  const k = String(s||"").toLowerCase();
+  const known = ["delivered","pending","accepted","on_the_way","cancelled","expired"];
+  const span = el("span","chip " + (known.includes(k) ? "s-"+k : "s-other"));
+  span.append(el("span","dot"), document.createTextNode(String(s||"UNKNOWN").replace(/_/g," ")));
+  return span;
+}
+function initials(name, uid){
+  const n = (name||"").trim();
+  if (n) return n.split(/\s+/).slice(0,2).map(w=>w[0]).join("").toUpperCase();
+  return (uid||"?").slice(0,2).toUpperCase();
+}
+function table(headers, rows, emptyTitle, emptyBody){
+  const frag = document.createDocumentFragment();
+  if (!rows.length){
+    const d = el("div","empty");
+    const b = el("b"); b.textContent = emptyTitle || "Nothing here yet.";
+    d.append(b);
+    if (emptyBody) d.append(document.createTextNode(emptyBody));
+    frag.append(d); return frag;
+  }
+  const t = el("table"), th = el("thead"), tr = el("tr");
+  headers.forEach(h => { const c = el("th", h && h.num ? "num" : "");
+    c.textContent = typeof h === "string" ? h : h.label; tr.append(c); });
+  th.append(tr); t.append(th);
+  const tb = el("tbody"); rows.forEach(r => tb.append(r)); t.append(tb);
+  frag.append(t); return frag;
+}
+const cell = (v, cls) => { const c = el("td", cls);
+  if (v instanceof Node) c.append(v); else c.textContent = v; return c; };
+
+function metrics(){
+  const o = state.orders;
+  const delivered = o.filter(x => x.status === "DELIVERED");
+  const lost      = o.filter(x => x.status === "CANCELLED" || x.status === "EXPIRED");
+  const active    = o.filter(x => ["PENDING","ACCEPTED","ON_THE_WAY"].includes(x.status));
+  const gmv       = delivered.reduce((s,x) => s + (Number(x.price)||0), 0);
+  const drivers   = people("drivers");
+  const customers = people("customers");
+  const online    = drivers.filter(d => state.locations[d.id] && state.locations[d.id].online === true).length;
+  const settled   = delivered.length + lost.length;
+  return {
+    customers: customers.length, customersNamed: customers.filter(c=>c.name).length,
+    drivers: drivers.length,     driversNamed: drivers.filter(d=>d.name).length,
+    online, orders:o.length, delivered:delivered.length, lost:lost.length, active:active.length,
+    gmv, aov: delivered.length ? gmv/delivered.length : 0,
+    rate: settled ? Math.round(delivered.length/settled*100) : 0,
+    blocked: Object.keys(state.blocked).length
+  };
+}
+
+function renderOverview(){
+  const m = metrics();
+  const tiles = [
+    ["i-users","Customers", num(m.customers), m.blocked ? m.blocked+" blocked" : m.customersNamed+" with a saved profile"],
+    ["i-truck","Drivers",   num(m.drivers),   m.online+" online now"],
+    ["i-box","Orders",      num(m.orders),    m.active+" in progress"],
+    ["i-check","Delivered", num(m.delivered), m.rate+"% of finished orders"],
+    ["i-cash","Value delivered", rs(m.gmv),   "cash collected by drivers"],
+    ["i-avg","Average order",    rs(m.aov),   "per completed delivery"]
+  ];
+  const box = $("#kpis"); box.innerHTML = "";
+  tiles.forEach(([ic,lab,val,sub]) => {
+    const k = el("div","kpi");
+    const i = el("div","ico"); i.append(icon(ic));
+    const a = el("div","lab"); a.textContent = lab;
+    const b = el("div","val"); b.textContent = val;
+    const c = el("div","sub"); c.textContent = sub;
+    k.append(i,a,b,c); box.append(k);
+  });
+
+  const days = lastDays(30);
+  drawChart(days);
+  $("#chartData").innerHTML = "";
+  $("#chartData").append(table(["Day",{label:"Orders",num:true}],
+    days.map(d => { const tr=el("tr"); tr.append(cell(d.label), cell(num(d.count),"num")); return tr; })));
+
+  const counts = {};
+  state.orders.forEach(o => { const s=o.status||"UNKNOWN"; counts[s]=(counts[s]||0)+1; });
+  const srows = Object.entries(counts).sort((a,b)=>b[1]-a[1]).map(([s,n]) => {
+    const tr = el("tr");
+    tr.append(cell(statusChip(s)), cell(num(n),"num"),
+              cell(state.orders.length ? Math.round(n/state.orders.length*100)+"%" : "—","num"));
+    return tr;
+  });
+  $("#statusTable").innerHTML = "";
+  $("#statusTable").append(table(["Status",{label:"Orders",num:true},{label:"Share",num:true}], srows));
+}
+
+function lastDays(n){
+  const out=[], now=new Date(); now.setHours(0,0,0,0);
+  for (let i=n-1;i>=0;i--){
+    const d=new Date(now); d.setDate(d.getDate()-i);
+    const next=new Date(d); next.setDate(next.getDate()+1);
+    out.push({ label:d.toLocaleDateString("en-GB",{day:"2-digit",month:"short"}),
+      count: state.orders.filter(o=>{ const t=Number(o.timestamp)||0; return t>=d.getTime() && t<next.getTime(); }).length });
+  }
+  return out;
+}
+
+const sv=(t,a)=>{ const n=document.createElementNS(NS,t); for(const k in a) n.setAttribute(k,a[k]); return n; };
+function drawChart(days){
+  const W=900,H=230,padL=36,padR=6,padT=12,padB=26;
+  const iw=W-padL-padR, ih=H-padT-padB;
+  const max=Math.max(1,...days.map(d=>d.count));
+  const svg=sv("svg",{viewBox:`0 0 ${W} ${H}`,role:"img","aria-label":"Orders per day, last 30 days"});
+  [0,.5,1].forEach(f=>{
+    const y=padT+ih-ih*f;
+    svg.append(sv("line",{class:"gridline",x1:padL,x2:W-padR,y1:y,y2:y}));
+    const tx=sv("text",{class:"axis-text",x:padL-8,y:y+3.5,"text-anchor":"end"});
+    tx.textContent=Math.round(max*f); svg.append(tx);
+  });
+  const slot=iw/days.length, bw=Math.max(3,slot-2);
+  days.forEach((d,i)=>{
+    const x=padL+i*slot+(slot-bw)/2;
+    const h=d.count?Math.max(3,ih*(d.count/max)):0;
+    if(h) svg.append(sv("rect",{class:"bar",x,y:padT+ih-h,width:bw,height:h,rx:Math.min(4,bw/2)}));
+    const hit=sv("rect",{class:"bar-hit",x:padL+i*slot,y:padT,width:slot,height:ih});
+    hit.addEventListener("pointerenter",e=>{
+      const t=$("#tip"); t.textContent=`${d.label} · ${d.count} order${d.count===1?"":"s"}`;
+      const r=e.target.getBoundingClientRect();
+      t.style.left=(r.left+r.width/2)+"px"; t.style.top=r.top+"px"; t.style.opacity=1;
+    });
+    hit.addEventListener("pointerleave",()=>{ $("#tip").style.opacity=0; });
+    svg.append(hit);
+    if(i%5===0){
+      const tx=sv("text",{class:"axis-text",x:padL+i*slot+slot/2,y:H-9,"text-anchor":"middle"});
+      tx.textContent=d.label.split(" ")[0]; svg.append(tx);
+    }
+  });
+  $("#chart").innerHTML=""; $("#chart").append(svg);
+}
+$("#toggleData").onclick = () => {
+  const hidden = $("#chartData").classList.toggle("hide");
+  $("#toggleData").textContent = hidden ? "Show data table" : "Hide data table";
+};
+
+function personCell(nm, uid){
+  const w = el("div","person");
+  const av = el("div","avatar"); av.textContent = initials(nm,uid);
+  const n = el("div", nm ? "nm" : "nm none");
+  n.textContent = nm || (uid ? uid.slice(0,8)+"…" : "—");
+  w.append(av,n); return w;
+}
+
+function renderOrders(){
+  const q=($("#qOrders").value||"").toLowerCase().trim(), f=$("#fStatus").value;
+  const cust=people("customers"), driv=people("drivers");
+  const find=(l,id)=>l.find(x=>x.id===id);
+  const nm=(l,id)=>{const r=find(l,id); return r&&r.name?r.name:null;};
+  const ph=(l,id)=>{const r=find(l,id); return r&&r.phone?r.phone:null;};
+
+  const list = state.orders.slice()
+    .sort((a,b)=>(Number(b.timestamp)||0)-(Number(a.timestamp)||0))
+    .filter(o=>!f || o.status===f)
+    .filter(o=>{ if(!q) return true;
+      return [o.address,o.status,o.price,o.capacity,nm(cust,o.customerId),nm(driv,o.driverId)]
+        .filter(Boolean).join(" ").toLowerCase().includes(q); });
+
+  $("#ordersCount").textContent = `${num(list.length)} of ${num(state.orders.length)} orders`;
+  const rows = list.map(o=>{
+    const tr=el("tr");
+    tr.append(
+      cell(dt(o.timestamp)), cell(statusChip(o.status)),
+      cell(personCell(nm(cust,o.customerId),o.customerId)), cell(dash(ph(cust,o.customerId))),
+      cell(o.driverId?personCell(nm(driv,o.driverId),o.driverId):"—"),
+      cell(o.driverId?dash(ph(driv,o.driverId)):"—"),
+      cell(num(o.capacity)+" L","num"), cell(o.price?rs(o.price):"—","num"),
+      cell(dash(o.address),"wrap"));
+    return tr;
+  });
+  $("#ordersTable").innerHTML="";
+  $("#ordersTable").append(table(
+    ["When","Status","Customer","Phone","Driver","Phone",{label:"Size",num:true},{label:"Price",num:true},"Address"],
+    rows, "No orders match.", "Try clearing the search or the status filter."));
+}
+$("#qOrders").oninput = renderOrders;
+$("#fStatus").onchange = renderOrders;
+
+function blockButton(uid){
+  const blocked = isBlocked(uid);
+  const b = el("button","btn ghost sm"); b.textContent = blocked ? "Unblock" : "Block";
+  b.onclick = async () => {
+    const who = uid.slice(0,8);
+    if (!confirm(blocked
+      ? `Unblock user ${who}…?\n\nThey will be able to place or take orders again.`
+      : `Block user ${who}…?\n\nThey stay signed in but cannot place orders, bid, or send messages.`)) return;
+    b.disabled = true;
+    try{
+      if (blocked) await remove(ref(db,"blocked/"+uid));
+      else         await set(ref(db,"blocked/"+uid), true);
+    }catch(e){ alert("Could not change this: " + (e.code||e.message)); b.disabled=false; }
+  };
+  return b;
+}
+
+function renderPeople(kind){
+  const isDriver = kind === "drivers";
+  const all = people(kind);
+  const q = ($(isDriver ? "#qDrivers" : "#qCustomers").value||"").toLowerCase().trim();
+  const shown = all.slice()
+    .sort((a,b)=> (b.lastSeen||b.joined||0) - (a.lastSeen||a.joined||0))
+    .filter(p => !q || [p.name,p.phone,p.email,p.address,p.vehicleNumber].filter(Boolean).join(" ").toLowerCase().includes(q));
+
+  const rows = shown.map(p=>{
+    const tr = el("tr");
+    if (isBlocked(p.id)) tr.className = "blocked-row";
+
+    const w = el("div","person");
+    const av = el("div","avatar"); av.textContent = initials(p.name,p.id);
+    const nb = el("div");
+    const n = el("div", p.name ? "nm" : "nm none");
+    n.textContent = p.name || "No profile saved";
+    const sub = el("div"); sub.style.cssText="font-size:.74rem;color:var(--text-muted)";
+    sub.textContent = p.id.slice(0,10)+"…";
+    nb.append(n,sub); w.append(av,nb);
+    if (isBlocked(p.id)){ const t=el("span","pill"); t.textContent="BLOCKED"; w.append(t); }
+    tr.append(cell(w), cell(dash(p.phone)), cell(dash(p.email)));
+
+    if (isDriver){
+      const r = p.rating && p.rating.count ? (p.rating.sum/p.rating.count).toFixed(1) : "—";
+      const on = state.locations[p.id] && state.locations[p.id].online === true;
+      const st = el("span", on?"online":"offline");
+      if (on){ st.append(el("span","dot"), document.createTextNode("Online")); } else st.textContent="Offline";
+      tr.append(cell(dash(p.vehicleNumber)), cell(p.capacity?num(p.capacity)+" L":"—","num"),
+                cell(r,"num"), cell(st));
+    } else {
+      const a = el("span");
+      a.textContent = p.address || "—";
+      if (p.addressFromOrder){ a.className="muted"; a.title="Taken from their most recent order"; }
+      tr.append(cell(a,"wrap"));
+    }
+    tr.append(cell(num(p.orders),"num"), cell(num(p.delivered),"num"),
+              cell(p.value?rs(p.value):"—","num"), cell(dOnly(p.joined)), cell(blockButton(p.id)));
+    return tr;
+  });
+
+  const heads = isDriver
+    ? ["Driver","Phone","Email","Vehicle",{label:"Capacity",num:true},{label:"Rating",num:true},"Status",
+       {label:"Jobs",num:true},{label:"Delivered",num:true},{label:"Earned",num:true},"First seen","Action"]
+    : ["Customer","Phone","Email","Address",{label:"Orders",num:true},{label:"Delivered",num:true},
+       {label:"Spent",num:true},"First seen","Action"];
+
+  const host = $(isDriver ? "#driversTable" : "#customersTable");
+  host.innerHTML = ""; host.append(table(heads, rows, "No one matches.", "Try a different search."));
+
+  const noProfile = all.filter(p=>!p.name).length;
+  $(isDriver ? "#driversCount" : "#customersCount").textContent =
+    `${num(shown.length)} of ${num(all.length)}`
+    + (noProfile ? ` · ${num(noProfile)} have not saved a profile` : "");
+
+  if (!isDriver){
+    const host2 = $("#customerNote"); host2.innerHTML = "";
+    if (noProfile){
+      const d = el("div","note"); d.append(icon("i-info"));
+      const s = el("div");
+      const b = el("b"); b.textContent = "Why are names and phones blank? ";
+      s.append(b, document.createTextNode(
+        "The customer app has no registration screen — it only saves a name, phone and address "
+        + "if the customer opens the Profile tab and fills it in. Their orders are all here; their "
+        + "details were never collected. The address column falls back to the address on their "
+        + "most recent order."));
+      d.append(s); host2.append(d);
+    }
+  }
+}
+$("#qCustomers").oninput = () => renderPeople("customers");
+$("#qDrivers").oninput   = () => renderPeople("drivers");
+
+function renderSupport(){
+  const cust = people("customers");
+  const list = state.tickets.slice().sort((a,b)=>(Number(b.timestamp)||0)-(Number(a.timestamp)||0));
+  $("#supportCount").textContent = `${num(list.length)} tickets`;
+  const rows = list.map(t=>{
+    const r = cust.find(x=>x.id===t.customerId);
+    const tr=el("tr");
+    tr.append(cell(dt(t.timestamp)), cell(dash(t.issueType)),
+              cell(personCell(r&&r.name?r.name:null, t.customerId)),
+              cell(dash(r&&r.phone?r.phone:"")),
+              cell(dash(t.message),"wrap"), cell(dash(t.status)));
+    return tr;
+  });
+  $("#supportTable").innerHTML="";
+  $("#supportTable").append(table(["When","Type","From","Phone","Message","Status"], rows,
+    "No support tickets.", "Tickets raised from the customer app appear here."));
+}
+
+const esc = v => { const s = v===undefined||v===null ? "" : String(v);
+  return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s; };
+function download(name, rows){
+  const csv = rows.map(r=>r.map(esc).join(",")).join("\r\n");
+  const url = URL.createObjectURL(new Blob(["﻿"+csv],{type:"text/csv;charset=utf-8"}));
+  const a = el("a"); a.href=url;
+  a.download = `inpani-${name}-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click(); setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-csv]"); if(!b) return;
+  const kind=b.dataset.csv, m=metrics();
+  if (kind==="summary"){
+    download("summary", [
+      ["Inpani — summary", new Date().toLocaleString("en-GB")], [],
+      ["Metric","Value"],
+      ["Customers", m.customers], ["  of which have a saved profile", m.customersNamed],
+      ["Drivers", m.drivers], ["  of which have a saved profile", m.driversNamed],
+      ["Drivers online now", m.online],
+      ["Orders placed", m.orders], ["Orders delivered", m.delivered],
+      ["Orders cancelled or expired", m.lost], ["Orders in progress", m.active],
+      ["Completion rate (%)", m.rate],
+      ["Total value delivered (PKR)", Math.round(m.gmv)],
+      ["Average order value (PKR)", Math.round(m.aov)],
+      ["Blocked users", m.blocked]
+    ]);
+  }
+  if (kind==="orders"){
+    const c=people("customers"), d=people("drivers");
+    const nm=(l,id)=>{const r=l.find(x=>x.id===id); return r&&r.name?r.name:"";};
+    const ph=(l,id)=>{const r=l.find(x=>x.id===id); return r&&r.phone?r.phone:"";};
+    download("orders",[["Date","Status","Customer","Customer phone","Customer ID","Driver","Driver phone","Capacity (L)","Price (PKR)","Address","Latitude","Longitude","Order ID"],
+      ...state.orders.slice().sort((a,b)=>(Number(b.timestamp)||0)-(Number(a.timestamp)||0)).map(o=>[
+        dt(o.timestamp),o.status,nm(c,o.customerId),ph(c,o.customerId),o.customerId||"",
+        o.driverId?nm(d,o.driverId):"",o.driverId?ph(d,o.driverId):"",
+        o.capacity,o.price,o.address,o.latitude,o.longitude,o.id])]);
+  }
+  if (kind==="customers"){
+    download("customers",[["Name","Phone","Email","Address","Address from order","Orders","Delivered","Spent (PKR)","First seen","Blocked","User ID"],
+      ...people("customers").map(p=>[p.name,p.phone,p.email,p.address,p.addressFromOrder?"YES":"",
+        p.orders,p.delivered,Math.round(p.value),dOnly(p.joined),isBlocked(p.id)?"YES":"",p.id])]);
+  }
+  if (kind==="drivers"){
+    download("drivers",[["Name","Phone","Email","Vehicle","Capacity (L)","Rating","Jobs","Delivered","Earned (PKR)","Online","First seen","Blocked","User ID"],
+      ...people("drivers").map(p=>[p.name,p.phone,p.email,p.vehicleNumber,p.capacity,
+        p.rating&&p.rating.count?(p.rating.sum/p.rating.count).toFixed(2):"",
+        p.orders,p.delivered,Math.round(p.value),
+        (state.locations[p.id]&&state.locations[p.id].online===true)?"YES":"",
+        dOnly(p.joined),isBlocked(p.id)?"YES":"",p.id])]);
+  }
+});
+
+const TITLES = {overview:"Overview",orders:"Orders",customers:"Customers",drivers:"Drivers",support:"Support tickets"};
+function selectTab(name){
+  $$("[data-tab]").forEach(x => x.setAttribute("aria-selected", String(x.dataset.tab === name)));
+  $$("[data-panel]").forEach(p => p.classList.toggle("hide", p.dataset.panel !== name));
+  $("#pageTitle").textContent = TITLES[name] || "";
+  window.scrollTo(0,0);
+}
+$$("[data-tab]").forEach(b => { b.onclick = () => selectTab(b.dataset.tab); });
+</script>
