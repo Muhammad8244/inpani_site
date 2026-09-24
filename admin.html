@@ -251,7 +251,7 @@ figure.chart svg{display:block;width:100%;height:auto;overflow:visible}
         <h2>Customers</h2>
         <p class="hint" id="customersCount"></p>
         <div class="toolbar">
-          <input type="search" id="qCustomers" placeholder="Search name, phone, address…">
+          <input type="search" id="qCustomers" placeholder="Search name, phone, email, address…">
           <button class="btn ghost sm" data-csv="customers">Download CSV</button>
         </div>
         <div class="tablewrap" id="customersTable"></div>
@@ -264,7 +264,7 @@ figure.chart svg{display:block;width:100%;height:auto;overflow:visible}
         <h2>Drivers</h2>
         <p class="hint" id="driversCount"></p>
         <div class="toolbar">
-          <input type="search" id="qDrivers" placeholder="Search name, phone, vehicle…">
+          <input type="search" id="qDrivers" placeholder="Search name, phone, email, vehicle…">
           <button class="btn ghost sm" data-csv="drivers">Download CSV</button>
         </div>
         <div class="tablewrap" id="driversTable"></div>
@@ -299,6 +299,10 @@ const firebaseConfig = {
   storageBucket: "customer-4aeda.firebasestorage.app",
   messagingSenderId: "1035345709906"
 };
+
+// Mirrors database.rules.json. The rules are the real enforcement — this list only
+// keeps a non-admin from seeing an empty shell full of permission errors.
+const ADMIN_EMAILS = ["bilalaarian000@gmail.com", "manich.ch@gmail.com"];
 
 const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -338,20 +342,18 @@ function showGateError(e){
 onAuthStateChanged(auth, async user => {
   if (!user){ $("#gate").classList.remove("hide"); $("#app").classList.add("hide"); return; }
 
-  let isAdmin = false;
-  try { isAdmin = (await get(ref(db, "admins/" + user.uid))).val() === true; } catch { isAdmin = false; }
+  const email = (user.email || "").toLowerCase();
+  const isAdmin = user.emailVerified && ADMIN_EMAILS.includes(email);
 
   if (!isAdmin){
-    $("#gateMsg").textContent = "This account is not on the admin list.";
+    $("#gateMsg").textContent = "This account cannot open Inpani Admin.";
     const box = $("#gateExtra"); box.innerHTML = "";
-    const p = el("p"); p.style.cssText="font-size:.86rem;color:var(--text-secondary);margin:0";
-    p.textContent = "Add this ID under admins in the Firebase console, then sign in again:";
-    const c = el("div","uidbox"); c.textContent = user.uid;
-    const b = el("button","btn ghost sm"); b.textContent = "Copy ID";
-    b.onclick = () => navigator.clipboard?.writeText(user.uid).then(()=> b.textContent="Copied");
+    const p = el("p"); p.style.cssText="font-size:.86rem;color:var(--text-secondary);margin:0 0 12px";
+    p.textContent = (user.email || "This account") + " is not an Inpani admin. Only the two owner "
+      + "accounts can sign in. The database refuses this account too, not just this page.";
     const o = el("button","btn ghost sm"); o.textContent = "Sign out";
-    o.style.marginLeft="8px"; o.onclick = () => signOut(auth);
-    box.append(p,c,b,o);
+    o.onclick = () => signOut(auth);
+    box.append(p,o);
     $("#signin").classList.add("hide");
     return;
   }
@@ -607,7 +609,7 @@ function renderPeople(kind){
   const q = ($( isDriver ? "#qDrivers" : "#qCustomers").value||"").toLowerCase().trim();
   const shown = list.slice()
     .sort((a,b)=>(Number(b.registeredAt)||0)-(Number(a.registeredAt)||0))
-    .filter(p => !q || [p.name,p.phone,p.address,p.vehicleNumber].filter(Boolean).join(" ").toLowerCase().includes(q));
+    .filter(p => !q || [p.name,p.phone,p.email,p.address,p.vehicleNumber].filter(Boolean).join(" ").toLowerCase().includes(q));
 
   const ordersBy = uid => state.orders.filter(o => isDriver ? o.driverId===uid : o.customerId===uid);
 
@@ -622,7 +624,7 @@ function renderPeople(kind){
     if (isBlocked(p.id)){
       const t = el("span","tag-blocked"); t.textContent = "  BLOCKED"; nameCell.append(t);
     }
-    tr.append(nameCell, cell(dash(p.phone)));
+    tr.append(nameCell, cell(dash(p.phone)), cell(dash(p.email)));
     if (isDriver){
       const r = p.rating && p.rating.count ? (p.rating.sum/p.rating.count).toFixed(1) : "—";
       tr.append(cell(dash(p.vehicleNumber)),
@@ -638,9 +640,9 @@ function renderPeople(kind){
   });
 
   const heads = isDriver
-    ? ["Name","Phone","Vehicle",{label:"Capacity",num:true},{label:"Rating",num:true},"Status",
+    ? ["Name","Phone","Email","Vehicle",{label:"Capacity",num:true},{label:"Rating",num:true},"Status",
        {label:"Jobs",num:true},{label:"Delivered",num:true},"Joined","Action"]
-    : ["Name","Phone","Address",{label:"Orders",num:true},{label:"Delivered",num:true},"Joined","Action"];
+    : ["Name","Phone","Email","Address",{label:"Orders",num:true},{label:"Delivered",num:true},"Joined","Action"];
 
   const host = $( isDriver ? "#driversTable" : "#customersTable");
   host.innerHTML = ""; host.append(table(heads, rows));
@@ -707,18 +709,18 @@ document.addEventListener("click", e => {
         o.capacity, o.price, o.address, o.latitude, o.longitude, o.id ])]);
   }
   if (kind === "customers"){
-    download("customers", [["Name","Phone","Address","Orders","Delivered","Joined","Blocked","User ID"],
+    download("customers", [["Name","Phone","Email","Address","Orders","Delivered","Joined","Blocked","User ID"],
       ...state.customers.map(c => { const mine = state.orders.filter(o=>o.customerId===c.id); return [
-        c.name||"", c.phone||"", c.address||"", mine.length,
+        c.name||"", c.phone||"", c.email||"", c.address||"", mine.length,
         mine.filter(o=>o.status==="DELIVERED").length, dOnly(c.registeredAt),
         isBlocked(c.id)?"YES":"", c.id ]; })]);
   }
   if (kind === "drivers"){
-    download("drivers", [["Name","Phone","Vehicle","Capacity (L)","Rating","Jobs","Delivered","Earned (PKR)","Joined","Blocked","User ID"],
+    download("drivers", [["Name","Phone","Email","Vehicle","Capacity (L)","Rating","Jobs","Delivered","Earned (PKR)","Joined","Blocked","User ID"],
       ...state.drivers.map(d => {
         const mine = state.orders.filter(o=>o.driverId===d.id);
         const done = mine.filter(o=>o.status==="DELIVERED");
-        return [ d.name||"", d.phone||"", d.vehicleNumber||"", d.capacity||"",
+        return [ d.name||"", d.phone||"", d.email||"", d.vehicleNumber||"", d.capacity||"",
           d.rating&&d.rating.count ? (d.rating.sum/d.rating.count).toFixed(2) : "",
           mine.length, done.length, Math.round(done.reduce((s,o)=>s+(Number(o.price)||0),0)),
           dOnly(d.registeredAt), isBlocked(d.id)?"YES":"", d.id ]; })]);
