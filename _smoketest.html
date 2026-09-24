@@ -1,0 +1,741 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>Inpani Admin</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="/icon-96.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0F4A57">
+
+<style>
+:root{
+  color-scheme: light;
+  --bg:#f2f6f7;
+  --surface-1:#ffffff;
+  --surface-2:#f7fafb;
+  --border:#dce8ec;
+  --text-primary:#0B2B33;
+  --text-secondary:#456a74;
+  --text-muted:#5B7C85;
+  --brand:#0F4A57;
+  --accent:#00B4D8;
+  --series-1:#0F4A57;          /* single-series bars: 9.8:1 on white */
+  --good:#0ca30c;
+  --warning:#fab219;
+  --serious:#ec835a;
+  --critical:#d03b3b;
+  --shadow:0 1px 2px rgba(11,43,51,.06),0 4px 16px rgba(11,43,51,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:where(:not([data-theme="light"])){
+    color-scheme: dark;
+    --bg:#101a1f;
+    --surface-1:#16232a;
+    --surface-2:#1c2b33;
+    --border:#294049;
+    --text-primary:#EAF4F6;
+    --text-secondary:#A9C3CB;
+    --text-muted:#8FA9B2;
+    --brand:#5BC8DE;
+    --accent:#5BC8DE;
+    --series-1:#5BC8DE;        /* 8.2:1 on #16232a */
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --bg:#101a1f; --surface-1:#16232a; --surface-2:#1c2b33; --border:#294049;
+  --text-primary:#EAF4F6; --text-secondary:#A9C3CB; --text-muted:#8FA9B2;
+  --brand:#5BC8DE; --accent:#5BC8DE; --series-1:#5BC8DE;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.3);
+}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--bg); color:var(--text-primary);
+  font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px 72px}
+
+header.top{background:var(--brand);color:#fff;padding:14px 0}
+header.top .in{max-width:1180px;margin:0 auto;padding:0 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+header.top svg{width:30px;height:30px;border-radius:8px;flex:none}
+header.top .name{font-weight:800;font-size:1.05rem;letter-spacing:.2px}
+header.top .spacer{flex:1}
+header.top .who{font-size:.82rem;opacity:.92;max-width:52vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn{
+  font:inherit;font-weight:600;font-size:.88rem;cursor:pointer;
+  border-radius:9px;padding:8px 14px;border:1px solid transparent;
+  background:var(--accent);color:#04303a;
+}
+.btn.ghost{background:transparent;border-color:currentColor;color:inherit}
+.btn.sm{padding:5px 10px;font-size:.8rem;border-radius:7px}
+.btn:disabled{opacity:.5;cursor:default}
+
+.gate{max-width:440px;margin:14vh auto;padding:30px 26px;background:var(--surface-1);
+  border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);text-align:center}
+.gate h1{font-size:1.3rem;margin:0 0 6px}
+.gate p{color:var(--text-secondary);font-size:.92rem;margin:0 0 18px}
+.uidbox{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.82rem;
+  background:var(--surface-2);border:1px solid var(--border);border-radius:9px;
+  padding:10px;word-break:break-all;margin:14px 0;color:var(--text-primary)}
+
+nav.tabs{display:flex;gap:4px;overflow-x:auto;margin:18px 0 16px;
+  border-bottom:1px solid var(--border);scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{
+  font:inherit;font-weight:600;font-size:.9rem;white-space:nowrap;cursor:pointer;
+  background:none;border:none;border-bottom:2.5px solid transparent;
+  color:var(--text-secondary);padding:9px 13px;margin-bottom:-1px;
+}
+nav.tabs button[aria-selected="true"]{color:var(--brand);border-bottom-color:var(--brand)}
+
+.kpis{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));margin-bottom:20px}
+.kpi{background:var(--surface-1);border:1px solid var(--border);border-radius:13px;padding:14px 15px;box-shadow:var(--shadow)}
+.kpi .lab{font-size:.77rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.kpi .val{font-size:1.72rem;font-weight:750;line-height:1.15;margin-top:5px;font-variant-numeric:tabular-nums}
+.kpi .sub{font-size:.79rem;color:var(--text-secondary);margin-top:2px}
+
+.card{background:var(--surface-1);border:1px solid var(--border);border-radius:13px;
+  padding:16px;box-shadow:var(--shadow);margin-bottom:18px}
+.card h2{font-size:1rem;margin:0 0 3px}
+.card .hint{font-size:.82rem;color:var(--text-muted);margin:0 0 14px}
+
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+input[type=search],select{
+  font:inherit;font-size:.88rem;padding:7px 10px;border-radius:9px;
+  border:1px solid var(--border);background:var(--surface-1);color:var(--text-primary);
+}
+input[type=search]{min-width:190px;flex:1}
+
+.tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);white-space:nowrap;vertical-align:middle}
+th{color:var(--text-muted);font-weight:600;font-size:.77rem;text-transform:uppercase;letter-spacing:.4px;
+  position:sticky;top:0;background:var(--surface-1)}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+tbody tr:hover{background:var(--surface-2)}
+td.wrap{white-space:normal;min-width:180px}
+
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:.74rem;font-weight:700;
+  padding:2px 8px;border-radius:999px;border:1px solid;letter-spacing:.2px}
+.chip .dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.s-delivered{color:var(--good);border-color:color-mix(in srgb,var(--good) 45%,transparent)}
+.s-pending{color:var(--warning);border-color:color-mix(in srgb,var(--warning) 45%,transparent)}
+.s-accepted,.s-on_the_way{color:var(--serious);border-color:color-mix(in srgb,var(--serious) 45%,transparent)}
+.s-cancelled,.s-expired{color:var(--critical);border-color:color-mix(in srgb,var(--critical) 45%,transparent)}
+.s-other{color:var(--text-muted);border-color:var(--border)}
+
+.blocked-row td{opacity:.62}
+.tag-blocked{color:var(--critical);font-weight:700;font-size:.74rem}
+
+figure.chart{margin:0}
+figure.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.bar{fill:var(--series-1)}
+.bar-hit{fill:transparent;cursor:pointer}
+.gridline{stroke:var(--border);stroke-width:1}
+.axis-text{fill:var(--text-muted);font-size:10px}
+#tip{
+  position:fixed;z-index:60;pointer-events:none;opacity:0;transition:opacity .1s;
+  background:var(--text-primary);color:var(--surface-1);font-size:.78rem;font-weight:600;
+  padding:5px 9px;border-radius:7px;white-space:nowrap;transform:translate(-50%,-140%);
+}
+.empty{color:var(--text-muted);font-size:.9rem;padding:22px 4px;text-align:center}
+.err{color:var(--critical);font-size:.86rem;margin-top:10px}
+.hide{display:none !important}
+.foot{color:var(--text-muted);font-size:.78rem;text-align:center;margin-top:26px}
+</style>
+
+<div id="tip" role="status" aria-live="polite"></div>
+
+<!-- ───────────────────────── sign-in gate ───────────────────────── -->
+<section id="gate" class="gate">
+  <svg viewBox="0 0 512 512" aria-hidden="true" style="width:56px;height:56px;border-radius:14px;margin-bottom:12px">
+    <rect width="512" height="512" rx="116" fill="#0F4A57"/>
+    <g fill="none" stroke-linecap="round">
+      <path d="M132,217 A132,132 0 0 1 380,217" stroke="#F1EFE8" stroke-width="52"/>
+      <path d="M124.5,273.5 A132,132 0 0 0 233,392" stroke="#3E8E9C" stroke-width="52"/>
+      <path d="M387.5,273.5 A132,132 0 0 1 279,392" stroke="#3E8E9C" stroke-width="52"/>
+    </g>
+    <path d="M256,138 C300,200 330,238 330,272 A74,74 0 1 1 182,272 C182,238 212,200 256,138 Z" fill="#F1EFE8"/>
+  </svg>
+  <h1>Inpani Admin</h1>
+  <p id="gateMsg">Sign in with the Google account on the admin list.</p>
+  <button class="btn" id="signin">Sign in with Google</button>
+  <div id="gateExtra"></div>
+</section>
+
+<!-- ───────────────────────── app ───────────────────────── -->
+<div id="app" class="hide">
+  <header class="top">
+    <div class="in">
+      <svg viewBox="0 0 512 512" aria-hidden="true">
+        <rect width="512" height="512" rx="116" fill="#0F4A57"/>
+        <path d="M256,138 C300,200 330,238 330,272 A74,74 0 1 1 182,272 C182,238 212,200 256,138 Z" fill="#F1EFE8"/>
+      </svg>
+      <span class="name">Inpani Admin</span>
+      <span class="spacer"></span>
+      <span class="who" id="who"></span>
+      <button class="btn ghost sm" id="theme" title="Light / dark">Theme</button>
+      <button class="btn ghost sm" id="signout">Sign out</button>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <nav class="tabs" role="tablist">
+      <button role="tab" aria-selected="true"  data-tab="overview">Overview</button>
+      <button role="tab" aria-selected="false" data-tab="orders">Orders</button>
+      <button role="tab" aria-selected="false" data-tab="customers">Customers</button>
+      <button role="tab" aria-selected="false" data-tab="drivers">Drivers</button>
+      <button role="tab" aria-selected="false" data-tab="support">Support</button>
+    </nav>
+
+    <!-- OVERVIEW -->
+    <section data-panel="overview">
+      <div class="kpis" id="kpis"></div>
+
+      <div class="card">
+        <h2>Orders per day</h2>
+        <p class="hint">Last 30 days. Hover a bar for the exact count.</p>
+        <figure class="chart" id="chart"></figure>
+        <div class="toolbar" style="margin:12px 0 0">
+          <button class="btn ghost sm" id="toggleData">Show data table</button>
+        </div>
+        <div class="tablewrap hide" id="chartData"></div>
+      </div>
+
+      <div class="card">
+        <h2>Order status breakdown</h2>
+        <p class="hint">Every order ever placed, by final state.</p>
+        <div class="tablewrap" id="statusTable"></div>
+      </div>
+
+      <div class="card">
+        <h2>Records for investors</h2>
+        <p class="hint">Downloads a spreadsheet file (CSV) you can open in Excel.</p>
+        <div class="toolbar">
+          <button class="btn sm" data-csv="summary">Summary</button>
+          <button class="btn sm" data-csv="orders">Orders</button>
+          <button class="btn sm" data-csv="customers">Customers</button>
+          <button class="btn sm" data-csv="drivers">Drivers</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ORDERS -->
+    <section data-panel="orders" class="hide">
+      <div class="card">
+        <h2>Orders</h2>
+        <p class="hint" id="ordersCount"></p>
+        <div class="toolbar">
+          <input type="search" id="qOrders" placeholder="Search address, customer, driver, price…">
+          <select id="fStatus">
+            <option value="">All statuses</option>
+            <option>PENDING</option><option>ACCEPTED</option><option>ON_THE_WAY</option>
+            <option>DELIVERED</option><option>CANCELLED</option><option>EXPIRED</option>
+          </select>
+          <button class="btn ghost sm" data-csv="orders">Download CSV</button>
+        </div>
+        <div class="tablewrap" id="ordersTable"></div>
+      </div>
+    </section>
+
+    <!-- CUSTOMERS -->
+    <section data-panel="customers" class="hide">
+      <div class="card">
+        <h2>Customers</h2>
+        <p class="hint" id="customersCount"></p>
+        <div class="toolbar">
+          <input type="search" id="qCustomers" placeholder="Search name, phone, address…">
+          <button class="btn ghost sm" data-csv="customers">Download CSV</button>
+        </div>
+        <div class="tablewrap" id="customersTable"></div>
+      </div>
+    </section>
+
+    <!-- DRIVERS -->
+    <section data-panel="drivers" class="hide">
+      <div class="card">
+        <h2>Drivers</h2>
+        <p class="hint" id="driversCount"></p>
+        <div class="toolbar">
+          <input type="search" id="qDrivers" placeholder="Search name, phone, vehicle…">
+          <button class="btn ghost sm" data-csv="drivers">Download CSV</button>
+        </div>
+        <div class="tablewrap" id="driversTable"></div>
+      </div>
+    </section>
+
+    <!-- SUPPORT -->
+    <section data-panel="support" class="hide">
+      <div class="card">
+        <h2>Support tickets</h2>
+        <p class="hint" id="supportCount"></p>
+        <div class="tablewrap" id="supportTable"></div>
+      </div>
+    </section>
+
+    <p class="foot">Inpani Admin · data live from Firebase · <span id="stamp"></span></p>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getDatabase, ref, get, onValue, set, remove }
+  from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC7IUTLSs9FZ5flIpYJXUIAUgljjBPOj-Q",
+  authDomain: "customer-4aeda.firebaseapp.com",
+  databaseURL: "https://customer-4aeda-default-rtdb.firebaseio.com",
+  projectId: "customer-4aeda",
+  storageBucket: "customer-4aeda.firebasestorage.app",
+  messagingSenderId: "1035345709906"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getDatabase(app);
+
+const $  = s => document.querySelector(s);
+const el = (t,c) => { const n=document.createElement(t); if(c) n.className=c; return n; };
+
+/* ── theme toggle ───────────────────────────────────────── */
+try{ const t=localStorage.getItem("inpani-admin-theme"); if(t) document.documentElement.dataset.theme=t; }catch{}
+$("#theme").onclick = () => {
+  const cur = document.documentElement.dataset.theme
+    || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  const next = cur === "dark" ? "light" : "dark";
+  document.documentElement.dataset.theme = next;
+  try{ localStorage.setItem("inpani-admin-theme", next); }catch{}
+  if (state.orders.length) renderOverview();
+};
+
+/* ── auth ───────────────────────────────────────────────── */
+$("#signin").onclick = async () => {
+  try { await signInWithPopup(auth, new GoogleAuthProvider()); }
+  catch(e){ showGateError(e); }
+};
+$("#signout").onclick = () => signOut(auth);
+
+function showGateError(e){
+  const box = $("#gateExtra");
+  box.innerHTML = "";
+  const p = el("p","err");
+  p.textContent = e && e.code === "auth/unauthorized-domain"
+    ? "This website address is not yet allowed in Firebase. Add it under Authentication → Settings → Authorized domains."
+    : "Could not sign in: " + (e && (e.code || e.message) || e);
+  box.append(p);
+}
+
+onAuthStateChanged(auth, async user => {
+  if (!user){ $("#gate").classList.remove("hide"); $("#app").classList.add("hide"); return; }
+
+  let isAdmin = false;
+  try { isAdmin = (await get(ref(db, "admins/" + user.uid))).val() === true; } catch { isAdmin = false; }
+
+  if (!isAdmin){
+    $("#gateMsg").textContent = "This account is not on the admin list.";
+    const box = $("#gateExtra"); box.innerHTML = "";
+    const p = el("p"); p.style.cssText="font-size:.86rem;color:var(--text-secondary);margin:0";
+    p.textContent = "Add this ID under admins in the Firebase console, then sign in again:";
+    const c = el("div","uidbox"); c.textContent = user.uid;
+    const b = el("button","btn ghost sm"); b.textContent = "Copy ID";
+    b.onclick = () => navigator.clipboard?.writeText(user.uid).then(()=> b.textContent="Copied");
+    const o = el("button","btn ghost sm"); o.textContent = "Sign out";
+    o.style.marginLeft="8px"; o.onclick = () => signOut(auth);
+    box.append(p,c,b,o);
+    $("#signin").classList.add("hide");
+    return;
+  }
+
+  $("#gate").classList.add("hide");
+  $("#app").classList.remove("hide");
+  $("#who").textContent = user.email || user.uid;
+  subscribe();
+});
+
+/* ── live data ──────────────────────────────────────────── */
+const state = { orders:[], customers:[], drivers:[], locations:{}, blocked:{}, tickets:[] };
+const asList = snap => { const v = snap.val() || {}; return Object.entries(v).map(([id,o]) => ({ id, ...(o&&typeof o==="object"?o:{value:o}) })); };
+
+function subscribe(){
+  onValue(ref(db,"orders"),           s => { state.orders    = asList(s); refresh(); });
+  onValue(ref(db,"customerProfiles"), s => { state.customers = asList(s); refresh(); });
+  onValue(ref(db,"driverProfiles"),   s => { state.drivers   = asList(s); refresh(); });
+  onValue(ref(db,"driverLocations"),  s => { state.locations = s.val() || {}; refresh(); });
+  onValue(ref(db,"blocked"),          s => { state.blocked   = s.val() || {}; refresh(); }, () => {});
+  onValue(ref(db,"supportTickets"),   s => { state.tickets   = asList(s); refresh(); }, () => {});
+}
+
+let pending = false;
+function refresh(){
+  if (pending) return;
+  pending = true;
+  requestAnimationFrame(() => {
+    pending = false;
+    renderOverview(); renderOrders(); renderCustomers(); renderDrivers(); renderSupport();
+    $("#stamp").textContent = "updated " + new Date().toLocaleTimeString();
+  });
+}
+
+/* ── helpers ────────────────────────────────────────────── */
+const num   = n => (Number(n)||0).toLocaleString("en-PK");
+const rs    = n => "Rs " + Math.round(Number(n)||0).toLocaleString("en-PK");
+const dt    = ms => ms ? new Date(Number(ms)).toLocaleString("en-GB",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}) : "—";
+const dOnly = ms => ms ? new Date(Number(ms)).toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}) : "—";
+const dash  = v => (v===undefined||v===null||v==="") ? "—" : String(v);
+
+const nameOf  = (list,uid) => { const r = list.find(x=>x.id===uid); return r && r.name ? r.name : null; };
+const phoneOf = (list,uid) => { const r = list.find(x=>x.id===uid); return r && r.phone ? r.phone : null; };
+const isBlocked = uid => Object.prototype.hasOwnProperty.call(state.blocked, uid);
+
+function statusChip(s){
+  const k = String(s||"").toLowerCase();
+  const known = ["delivered","pending","accepted","on_the_way","cancelled","expired"];
+  const span = el("span","chip " + (known.includes(k) ? "s-"+k : "s-other"));
+  span.append(el("span","dot"));
+  span.append(document.createTextNode(String(s||"UNKNOWN").replace(/_/g," ")));
+  return span;
+}
+
+function table(headers, rows){
+  const wrap = document.createDocumentFragment();
+  if (!rows.length){ const d = el("div","empty"); d.textContent = "Nothing here yet."; wrap.append(d); return wrap; }
+  const t = el("table"), th = el("thead"), tr = el("tr");
+  headers.forEach(h => { const c = el("th"); c.textContent = typeof h==="string"?h:h.label; if(h.num) c.style.textAlign="right"; tr.append(c); });
+  th.append(tr); t.append(th);
+  const tb = el("tbody");
+  rows.forEach(r => tb.append(r));
+  t.append(tb); wrap.append(t);
+  return wrap;
+}
+const cell = (v, cls) => { const c = el("td", cls); if (v instanceof Node) c.append(v); else c.textContent = v; return c; };
+
+/* ── overview ───────────────────────────────────────────── */
+function metrics(){
+  const o = state.orders;
+  const delivered = o.filter(x => x.status === "DELIVERED");
+  const lost      = o.filter(x => x.status === "CANCELLED" || x.status === "EXPIRED");
+  const active    = o.filter(x => ["PENDING","ACCEPTED","ON_THE_WAY"].includes(x.status));
+  const gmv       = delivered.reduce((s,x) => s + (Number(x.price)||0), 0);
+  const online    = Object.values(state.locations).filter(v => v && v.online === true).length;
+  const settled   = delivered.length + lost.length;
+  return {
+    customers: state.customers.length,
+    drivers:   state.drivers.length,
+    online,
+    orders:    o.length,
+    delivered: delivered.length,
+    lost:      lost.length,
+    active:    active.length,
+    gmv,
+    aov:       delivered.length ? gmv / delivered.length : 0,
+    rate:      settled ? Math.round(delivered.length / settled * 100) : 0,
+    blocked:   Object.keys(state.blocked).length
+  };
+}
+
+function renderOverview(){
+  const m = metrics();
+  const tiles = [
+    ["Customers", num(m.customers), m.blocked ? m.blocked + " blocked" : "registered"],
+    ["Drivers",   num(m.drivers),   m.online + " online now"],
+    ["Orders",    num(m.orders),    m.active + " in progress"],
+    ["Delivered", num(m.delivered), m.rate + "% of finished orders"],
+    ["Value delivered", rs(m.gmv),  "cash collected by drivers"],
+    ["Average order",   rs(m.aov),  "per completed delivery"]
+  ];
+  const box = $("#kpis"); box.innerHTML = "";
+  tiles.forEach(([lab,val,sub]) => {
+    const k = el("div","kpi");
+    const a = el("div","lab"); a.textContent = lab;
+    const b = el("div","val"); b.textContent = val;
+    const c = el("div","sub"); c.textContent = sub;
+    k.append(a,b,c); box.append(k);
+  });
+
+  const days = lastDays(30);
+  drawChart(days);
+
+  const rows = days.map(d => {
+    const tr = el("tr");
+    tr.append(cell(d.label), cell(num(d.count), "num"));
+    return tr;
+  });
+  $("#chartData").innerHTML = ""; $("#chartData").append(table(["Day",{label:"Orders",num:true}], rows));
+
+  const counts = {};
+  state.orders.forEach(o => { const s = o.status || "UNKNOWN"; counts[s] = (counts[s]||0)+1; });
+  const srows = Object.entries(counts).sort((a,b)=>b[1]-a[1]).map(([s,n]) => {
+    const tr = el("tr");
+    tr.append(cell(statusChip(s)), cell(num(n),"num"),
+              cell(state.orders.length ? Math.round(n/state.orders.length*100)+"%" : "—","num"));
+    return tr;
+  });
+  $("#statusTable").innerHTML = "";
+  $("#statusTable").append(table(["Status",{label:"Orders",num:true},{label:"Share",num:true}], srows));
+}
+
+function lastDays(n){
+  const out = [], now = new Date(); now.setHours(0,0,0,0);
+  for (let i=n-1;i>=0;i--){
+    const d = new Date(now); d.setDate(d.getDate()-i);
+    const next = new Date(d); next.setDate(next.getDate()+1);
+    out.push({
+      date:d,
+      label:d.toLocaleDateString("en-GB",{day:"2-digit",month:"short"}),
+      count: state.orders.filter(o => { const t=Number(o.timestamp)||0; return t>=d.getTime() && t<next.getTime(); }).length
+    });
+  }
+  return out;
+}
+
+const NS = "http://www.w3.org/2000/svg";
+const sv = (t,a) => { const n=document.createElementNS(NS,t); for(const k in a) n.setAttribute(k,a[k]); return n; };
+
+function drawChart(days){
+  const W=900, H=220, padL=34, padR=6, padT=10, padB=24;
+  const iw = W-padL-padR, ih = H-padT-padB;
+  const max = Math.max(1, ...days.map(d=>d.count));
+  const svg = sv("svg",{viewBox:`0 0 ${W} ${H}`,role:"img","aria-label":"Orders per day, last 30 days"});
+
+  [0,.5,1].forEach(f => {
+    const y = padT + ih - ih*f;
+    svg.append(sv("line",{class:"gridline",x1:padL,x2:W-padR,y1:y,y2:y}));
+    const tx = sv("text",{class:"axis-text",x:padL-7,y:y+3,"text-anchor":"end"});
+    tx.textContent = Math.round(max*f); svg.append(tx);
+  });
+
+  const slot = iw/days.length, bw = Math.max(3, slot-2);   /* 2px surface gap */
+  days.forEach((d,i) => {
+    const x = padL + i*slot + (slot-bw)/2;
+    const h = d.count ? Math.max(3, ih*(d.count/max)) : 0;
+    if (h) svg.append(sv("rect",{class:"bar",x,y:padT+ih-h,width:bw,height:h,rx:Math.min(4,bw/2)}));
+    const hit = sv("rect",{class:"bar-hit",x:padL+i*slot,y:padT,width:slot,height:ih});
+    hit.addEventListener("pointerenter", e => {
+      const t=$("#tip");
+      t.textContent = `${d.label} · ${d.count} order${d.count===1?"":"s"}`;
+      const r=e.target.getBoundingClientRect();
+      t.style.left=(r.left+r.width/2)+"px"; t.style.top=r.top+"px"; t.style.opacity=1;
+    });
+    hit.addEventListener("pointerleave", () => { $("#tip").style.opacity=0; });
+    svg.append(hit);
+    if (i % 5 === 0){
+      const tx = sv("text",{class:"axis-text",x:padL+i*slot+slot/2,y:H-8,"text-anchor":"middle"});
+      tx.textContent = d.label.split(" ")[0]; svg.append(tx);
+    }
+  });
+  $("#chart").innerHTML = ""; $("#chart").append(svg);
+}
+
+$("#toggleData").onclick = () => {
+  const box = $("#chartData"), hidden = box.classList.toggle("hide");
+  $("#toggleData").textContent = hidden ? "Show data table" : "Hide data table";
+};
+
+/* ── orders ─────────────────────────────────────────────── */
+function orderRows(){
+  const q = ($("#qOrders").value||"").toLowerCase().trim();
+  const f = $("#fStatus").value;
+  return state.orders
+    .slice().sort((a,b)=>(Number(b.timestamp)||0)-(Number(a.timestamp)||0))
+    .filter(o => !f || o.status === f)
+    .filter(o => {
+      if (!q) return true;
+      const hay = [o.address, o.status, o.price, o.capacity,
+        nameOf(state.customers,o.customerId), nameOf(state.drivers,o.driverId)]
+        .filter(Boolean).join(" ").toLowerCase();
+      return hay.includes(q);
+    });
+}
+
+function renderOrders(){
+  const list = orderRows();
+  $("#ordersCount").textContent = `${num(list.length)} of ${num(state.orders.length)} orders`;
+  const rows = list.map(o => {
+    const tr = el("tr");
+    tr.append(
+      cell(dt(o.timestamp)),
+      cell(statusChip(o.status)),
+      cell(dash(nameOf(state.customers,o.customerId) || o.customerId)),
+      cell(dash(phoneOf(state.customers,o.customerId))),
+      cell(o.driverId ? dash(nameOf(state.drivers,o.driverId) || o.driverId) : "—"),
+      cell(o.driverId ? dash(phoneOf(state.drivers,o.driverId)) : "—"),
+      cell(num(o.capacity)+" L","num"),
+      cell(o.price ? rs(o.price) : "—","num"),
+      cell(dash(o.address),"wrap")
+    );
+    return tr;
+  });
+  $("#ordersTable").innerHTML = "";
+  $("#ordersTable").append(table(
+    ["When","Status","Customer","Phone","Driver","Phone",{label:"Size",num:true},{label:"Price",num:true},"Address"], rows));
+}
+$("#qOrders").oninput = renderOrders;
+$("#fStatus").onchange = renderOrders;
+
+/* ── people (customers / drivers) ───────────────────────── */
+function blockButton(uid){
+  const blocked = isBlocked(uid);
+  const b = el("button","btn ghost sm");
+  b.textContent = blocked ? "Unblock" : "Block";
+  b.onclick = async () => {
+    const who = uid.slice(0,8);
+    if (!confirm(blocked
+      ? `Unblock user ${who}…?\n\nThey will be able to place or take orders again.`
+      : `Block user ${who}…?\n\nThey stay signed in but cannot place orders, bid, or send messages.`)) return;
+    b.disabled = true;
+    try{
+      if (blocked) await remove(ref(db,"blocked/"+uid));
+      else         await set(ref(db,"blocked/"+uid), true);
+    }catch(e){ alert("Could not change this: " + (e.code||e.message)); b.disabled=false; }
+  };
+  return b;
+}
+
+function renderPeople(kind){
+  const isDriver = kind === "drivers";
+  const list  = isDriver ? state.drivers : state.customers;
+  const q = ($( isDriver ? "#qDrivers" : "#qCustomers").value||"").toLowerCase().trim();
+  const shown = list.slice()
+    .sort((a,b)=>(Number(b.registeredAt)||0)-(Number(a.registeredAt)||0))
+    .filter(p => !q || [p.name,p.phone,p.address,p.vehicleNumber].filter(Boolean).join(" ").toLowerCase().includes(q));
+
+  const ordersBy = uid => state.orders.filter(o => isDriver ? o.driverId===uid : o.customerId===uid);
+
+  const rows = shown.map(p => {
+    const mine = ordersBy(p.id);
+    const done = mine.filter(o=>o.status==="DELIVERED");
+    const tr = el("tr");
+    if (isBlocked(p.id)) tr.className = "blocked-row";
+
+    const nameCell = el("td");
+    nameCell.textContent = p.name || "(no name)";
+    if (isBlocked(p.id)){
+      const t = el("span","tag-blocked"); t.textContent = "  BLOCKED"; nameCell.append(t);
+    }
+    tr.append(nameCell, cell(dash(p.phone)));
+    if (isDriver){
+      const r = p.rating && p.rating.count ? (p.rating.sum/p.rating.count).toFixed(1) : "—";
+      tr.append(cell(dash(p.vehicleNumber)),
+                cell(p.capacity ? num(p.capacity)+" L" : "—","num"),
+                cell(r,"num"),
+                cell((state.locations[p.id]&&state.locations[p.id].online===true) ? "Online" : "Offline"));
+    } else {
+      tr.append(cell(dash(p.address),"wrap"));
+    }
+    tr.append(cell(num(mine.length),"num"), cell(num(done.length),"num"),
+              cell(dOnly(p.registeredAt)), cell(blockButton(p.id)));
+    return tr;
+  });
+
+  const heads = isDriver
+    ? ["Name","Phone","Vehicle",{label:"Capacity",num:true},{label:"Rating",num:true},"Status",
+       {label:"Jobs",num:true},{label:"Delivered",num:true},"Joined","Action"]
+    : ["Name","Phone","Address",{label:"Orders",num:true},{label:"Delivered",num:true},"Joined","Action"];
+
+  const host = $( isDriver ? "#driversTable" : "#customersTable");
+  host.innerHTML = ""; host.append(table(heads, rows));
+  $( isDriver ? "#driversCount" : "#customersCount").textContent =
+    `${num(shown.length)} of ${num(list.length)}`;
+}
+const renderCustomers = () => renderPeople("customers");
+const renderDrivers   = () => renderPeople("drivers");
+$("#qCustomers").oninput = renderCustomers;
+$("#qDrivers").oninput   = renderDrivers;
+
+/* ── support ────────────────────────────────────────────── */
+function renderSupport(){
+  const list = state.tickets.slice().sort((a,b)=>(Number(b.timestamp)||0)-(Number(a.timestamp)||0));
+  $("#supportCount").textContent = `${num(list.length)} tickets`;
+  const rows = list.map(t => {
+    const tr = el("tr");
+    tr.append(cell(dt(t.timestamp)), cell(dash(t.issueType)),
+              cell(dash(nameOf(state.customers,t.customerId) || t.customerId)),
+              cell(dash(phoneOf(state.customers,t.customerId))),
+              cell(dash(t.message),"wrap"), cell(dash(t.status)));
+    return tr;
+  });
+  $("#supportTable").innerHTML = "";
+  $("#supportTable").append(table(["When","Type","From","Phone","Message","Status"], rows));
+}
+
+/* ── CSV export ─────────────────────────────────────────── */
+const esc = v => { const s = v===undefined||v===null ? "" : String(v); return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s; };
+function download(name, rows){
+  const csv = rows.map(r => r.map(esc).join(",")).join("\r\n");
+  const url = URL.createObjectURL(new Blob(["﻿"+csv], {type:"text/csv;charset=utf-8"}));
+  const a = el("a"); a.href = url;
+  a.download = `inpani-${name}-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click(); setTimeout(()=>URL.revokeObjectURL(url), 1000);
+}
+
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-csv]"); if (!b) return;
+  const kind = b.dataset.csv, m = metrics();
+  if (kind === "summary"){
+    download("summary", [
+      ["Inpani — summary", new Date().toLocaleString("en-GB")],
+      [], ["Metric","Value"],
+      ["Customers registered", m.customers],
+      ["Drivers registered", m.drivers],
+      ["Drivers online now", m.online],
+      ["Orders placed", m.orders],
+      ["Orders delivered", m.delivered],
+      ["Orders cancelled or expired", m.lost],
+      ["Orders in progress", m.active],
+      ["Completion rate (%)", m.rate],
+      ["Total value delivered (PKR)", Math.round(m.gmv)],
+      ["Average order value (PKR)", Math.round(m.aov)],
+      ["Blocked users", m.blocked]
+    ]);
+  }
+  if (kind === "orders"){
+    download("orders", [["Date","Status","Customer","Customer phone","Driver","Driver phone","Capacity (L)","Price (PKR)","Address","Latitude","Longitude","Order ID"],
+      ...state.orders.slice().sort((a,b)=>(Number(b.timestamp)||0)-(Number(a.timestamp)||0)).map(o => [
+        dt(o.timestamp), o.status,
+        nameOf(state.customers,o.customerId)||o.customerId, phoneOf(state.customers,o.customerId)||"",
+        o.driverId ? (nameOf(state.drivers,o.driverId)||o.driverId) : "", o.driverId ? (phoneOf(state.drivers,o.driverId)||"") : "",
+        o.capacity, o.price, o.address, o.latitude, o.longitude, o.id ])]);
+  }
+  if (kind === "customers"){
+    download("customers", [["Name","Phone","Address","Orders","Delivered","Joined","Blocked","User ID"],
+      ...state.customers.map(c => { const mine = state.orders.filter(o=>o.customerId===c.id); return [
+        c.name||"", c.phone||"", c.address||"", mine.length,
+        mine.filter(o=>o.status==="DELIVERED").length, dOnly(c.registeredAt),
+        isBlocked(c.id)?"YES":"", c.id ]; })]);
+  }
+  if (kind === "drivers"){
+    download("drivers", [["Name","Phone","Vehicle","Capacity (L)","Rating","Jobs","Delivered","Earned (PKR)","Joined","Blocked","User ID"],
+      ...state.drivers.map(d => {
+        const mine = state.orders.filter(o=>o.driverId===d.id);
+        const done = mine.filter(o=>o.status==="DELIVERED");
+        return [ d.name||"", d.phone||"", d.vehicleNumber||"", d.capacity||"",
+          d.rating&&d.rating.count ? (d.rating.sum/d.rating.count).toFixed(2) : "",
+          mine.length, done.length, Math.round(done.reduce((s,o)=>s+(Number(o.price)||0),0)),
+          dOnly(d.registeredAt), isBlocked(d.id)?"YES":"", d.id ]; })]);
+  }
+});
+
+/* ── tabs ───────────────────────────────────────────────── */
+document.querySelectorAll("nav.tabs button").forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll("nav.tabs button").forEach(x => x.setAttribute("aria-selected", String(x===b)));
+    document.querySelectorAll("[data-panel]").forEach(p => p.classList.toggle("hide", p.dataset.panel !== b.dataset.tab));
+  };
+});
+
+window.__smoke = (o,c,dr,l,b,t) => {
+  state.orders=o; state.customers=c; state.drivers=dr; state.locations=l; state.blocked=b; state.tickets=t;
+  document.querySelector("#gate").classList.add("hide");
+  document.querySelector("#app").classList.remove("hide");
+  document.querySelector("#who").textContent = "smoke@test";
+  refresh();
+};
+</script>
