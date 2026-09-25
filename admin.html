@@ -502,6 +502,28 @@ function isStale(uid){
   const l = locationOf(uid);
   return !!(l && l.online === true && !isOnline(uid));
 }
+/**
+ * Every bid ever placed, flattened out of orders/{id}/bids.
+ * Bids also carry driverName, which is often the only place a driver's name exists —
+ * a driver who never finished registration still signs their bids.
+ */
+function allBids(){
+  const out = [];
+  state.orders.forEach(o => {
+    const b = o.bids;
+    if (!b || typeof b !== "object") return;
+    Object.entries(b).forEach(([uid,v]) => {
+      if (!v || typeof v !== "object") return;
+      const did = v.driverId || uid;
+      out.push({ orderId:o.id, driverId:did, driverName:(v.driverName||"").trim(),
+                 amount:Number(v.amount)||0, timestamp:Number(v.timestamp)||0,
+                 won: o.driverId === did });
+    });
+  });
+  return out;
+}
+const bidCount = o => (o && o.bids && typeof o.bids === "object") ? Object.keys(o.bids).length : 0;
+
 function ago(ms){
   if (!ms) return "unknown";
   const s = Math.max(0, Math.floor((Date.now() - Number(ms)) / 1000));
@@ -527,8 +549,17 @@ function people(kind){
   state.orders.forEach(o => { const u = isDriver ? o.driverId : o.customerId; if (u) ids.add(u); });
   if (isDriver) Object.keys(state.locations).forEach(u => ids.add(u));
 
+  // Names hide in two other places for drivers who never completed a profile.
+  const bidsAll = isDriver ? allBids() : [];
+  const bidNames = {};
+  bidsAll.forEach(b => { if (b.driverName && !bidNames[b.driverId]) bidNames[b.driverId] = b.driverName; });
+
   return Array.from(ids).map(uid => {
     const p = byId.get(uid) || {};
+    const loc = state.locations[uid];
+    const recovered = isDriver
+      ? ((loc && typeof loc.name === "string" && loc.name.trim()) || bidNames[uid] || "")
+      : "";
     const mine = state.orders.filter(o => (isDriver ? o.driverId : o.customerId) === uid);
     const done = mine.filter(o => o.status === "DELIVERED");
     const sorted = mine.slice().sort((a,b)=>(Number(b.timestamp)||0)-(Number(a.timestamp)||0));
@@ -537,11 +568,14 @@ function people(kind){
     const joined = Number(p.registeredAt) || roleAt || (isFinite(firstOrder) ? firstOrder : 0);
     return {
       id: uid, hasProfile: byId.has(uid),
-      name: p.name || "", phone: p.phone || "", email: p.email || "",
+      name: p.name || recovered, nameRecovered: !p.name && !!recovered,
+      phone: p.phone || "", email: p.email || "",
       vehicleNumber: p.vehicleNumber || "", capacity: p.capacity || "", rating: p.rating,
       address: p.address || (sorted[0] ? sorted[0].address : ""),
       addressFromOrder: !p.address && !!(sorted[0] && sorted[0].address),
       orders: mine.length, delivered: done.length,
+      bids: bidsAll.filter(b => b.driverId === uid).length,
+      bidsWon: bidsAll.filter(b => b.driverId === uid && b.won).length,
       value: done.reduce((s,o)=>s+(Number(o.price)||0),0),
       lastSeen: sorted[0] ? Number(sorted[0].timestamp)||0 : 0,
       joined
@@ -591,10 +625,14 @@ function metrics(){
   const online    = drivers.filter(d => isOnline(d.id)).length;
   const stale     = drivers.filter(d => isStale(d.id)).length;
   const settled   = delivered.length + lost.length;
+  const bids      = allBids();
+  const withBids  = o.filter(x => bidCount(x) > 0).length;
   return {
     customers: customers.length, customersNamed: customers.filter(c=>c.name).length,
     drivers: drivers.length,     driversNamed: drivers.filter(d=>d.name).length,
-    online, stale, orders:o.length, delivered:delivered.length, lost:lost.length, active:active.length,
+    online, stale, orders:o.length,
+    bids: bids.length, withBids,
+    bidsPerOrder: o.length ? (bids.length / o.length) : 0, delivered:delivered.length, lost:lost.length, active:active.length,
     gmv, aov: delivered.length ? gmv/delivered.length : 0,
     rate: settled ? Math.round(delivered.length/settled*100) : 0,
     blocked: Object.keys(state.blocked).length
@@ -612,7 +650,9 @@ function renderOverview(){
     ["i-box","Orders",      num(m.orders),    m.active+" in progress"],
     ["i-check","Delivered", num(m.delivered), m.rate+"% of finished orders"],
     ["i-cash","Value delivered", rs(m.gmv),   "cash collected by drivers"],
-    ["i-avg","Average order",    rs(m.aov),   "per completed delivery"]
+    ["i-avg","Average order",    rs(m.aov),   "per completed delivery"],
+    ["i-life","Bids placed",     num(m.bids),
+      m.bidsPerOrder.toFixed(1) + " per order · " + m.withBids + " orders got a bid"]
   ];
   const box = $("#kpis"); box.innerHTML = "";
   tiles.forEach(([ic,lab,val,sub]) => {
@@ -721,12 +761,14 @@ function renderOrders(){
       cell(o.driverId?personCell(nm(driv,o.driverId),o.driverId):"—"),
       cell(o.driverId?dash(ph(driv,o.driverId)):"—"),
       cell(num(o.capacity)+" L","num"), cell(o.price?rs(o.price):"—","num"),
+      cell(bidCount(o) ? num(bidCount(o)) : "—","num"),
       cell(dash(o.address),"wrap"));
     return tr;
   });
   $("#ordersTable").innerHTML="";
   $("#ordersTable").append(table(
-    ["When","Status","Customer","Phone","Driver","Phone",{label:"Size",num:true},{label:"Price",num:true},"Address"],
+    ["When","Status","Customer","Phone","Driver","Phone",{label:"Size",num:true},{label:"Price",num:true},
+     {label:"Bids",num:true},"Address"],
     rows, "No orders match.", "Try clearing the search or the status filter."));
 }
 $("#qOrders").oninput = renderOrders;
@@ -766,6 +808,10 @@ function renderPeople(kind){
     const nb = el("div");
     const n = el("div", p.name ? "nm" : "nm none");
     n.textContent = p.name || "No profile saved";
+    if (p.nameRecovered){
+      n.title = "Name taken from their bids or live location, not a saved profile";
+      n.style.fontStyle = "italic";
+    }
     const sub = el("div"); sub.style.cssText="font-size:.74rem;color:var(--text-muted)";
     sub.textContent = p.id.slice(0,10)+"…";
     nb.append(n,sub); w.append(av,nb);
@@ -785,7 +831,8 @@ function renderPeople(kind){
         st.textContent = "Offline";
       }
       tr.append(cell(dash(p.vehicleNumber)), cell(p.capacity?num(p.capacity)+" L":"—","num"),
-                cell(r,"num"), cell(st));
+                cell(r,"num"), cell(st),
+                cell(p.bids?num(p.bids):"—","num"), cell(p.bidsWon?num(p.bidsWon):"—","num"));
     } else {
       const a = el("span");
       a.textContent = p.address || "—";
@@ -799,6 +846,7 @@ function renderPeople(kind){
 
   const heads = isDriver
     ? ["Driver","Phone","Email","Vehicle",{label:"Capacity",num:true},{label:"Rating",num:true},"Status",
+       {label:"Bids",num:true},{label:"Won",num:true},
        {label:"Jobs",num:true},{label:"Delivered",num:true},{label:"Earned",num:true},"First seen","Action"]
     : ["Customer","Phone","Email","Address",{label:"Orders",num:true},{label:"Delivered",num:true},
        {label:"Spent",num:true},"First seen","Action"];
@@ -883,6 +931,8 @@ document.addEventListener("click", e => {
       ["Drivers", m.drivers], ["  of which have a saved profile", m.driversNamed],
       ["Drivers online now", m.online],
       ["Orders placed", m.orders], ["Orders delivered", m.delivered],
+      ["Bids placed by drivers", m.bids],
+      ["Orders that received at least one bid", m.withBids],
       ["Orders cancelled or expired", m.lost], ["Orders in progress", m.active],
       ["Completion rate (%)", m.rate],
       ["Total value delivered (PKR)", Math.round(m.gmv)],
@@ -894,11 +944,11 @@ document.addEventListener("click", e => {
     const c=people("customers"), d=people("drivers");
     const nm=(l,id)=>{const r=l.find(x=>x.id===id); return r&&r.name?r.name:"";};
     const ph=(l,id)=>{const r=l.find(x=>x.id===id); return r&&r.phone?r.phone:"";};
-    download("orders",[["Date","Status","Customer","Customer phone","Customer ID","Driver","Driver phone","Capacity (L)","Price (PKR)","Address","Latitude","Longitude","Order ID"],
+    download("orders",[["Date","Status","Customer","Customer phone","Customer ID","Driver","Driver phone","Capacity (L)","Price (PKR)","Bids","Address","Latitude","Longitude","Order ID"],
       ...state.orders.slice().sort((a,b)=>(Number(b.timestamp)||0)-(Number(a.timestamp)||0)).map(o=>[
         dt(o.timestamp),o.status,nm(c,o.customerId),ph(c,o.customerId),o.customerId||"",
         o.driverId?nm(d,o.driverId):"",o.driverId?ph(d,o.driverId):"",
-        o.capacity,o.price,o.address,o.latitude,o.longitude,o.id])]);
+        o.capacity,o.price,bidCount(o),o.address,o.latitude,o.longitude,o.id])]);
   }
   if (kind==="customers"){
     download("customers",[["Name","Phone","Email","Address","Address from order","Orders","Delivered","Spent (PKR)","First seen","Blocked","User ID"],
@@ -906,9 +956,11 @@ document.addEventListener("click", e => {
         p.orders,p.delivered,Math.round(p.value),dOnly(p.joined),isBlocked(p.id)?"YES":"",p.id])]);
   }
   if (kind==="drivers"){
-    download("drivers",[["Name","Phone","Email","Vehicle","Capacity (L)","Rating","Jobs","Delivered","Earned (PKR)","Online","First seen","Blocked","User ID"],
-      ...people("drivers").map(p=>[p.name,p.phone,p.email,p.vehicleNumber,p.capacity,
+    download("drivers",[["Name","Name source","Phone","Email","Vehicle","Capacity (L)","Rating","Bids placed","Bids won","Jobs","Delivered","Earned (PKR)","Online","First seen","Blocked","User ID"],
+      ...people("drivers").map(p=>[p.name,p.nameRecovered?"from bid/location":"profile",
+        p.phone,p.email,p.vehicleNumber,p.capacity,
         p.rating&&p.rating.count?(p.rating.sum/p.rating.count).toFixed(2):"",
+        p.bids,p.bidsWon,
         p.orders,p.delivered,Math.round(p.value),
         isOnline(p.id)?"YES":(isStale(p.id)?"STALE":""),
         dOnly(p.joined),isBlocked(p.id)?"YES":"",p.id])]);
