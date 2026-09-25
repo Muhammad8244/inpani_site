@@ -482,6 +482,35 @@ const dash  = v => (v===undefined||v===null||v==="") ? "—" : String(v);
 const isBlocked = uid => Object.prototype.hasOwnProperty.call(state.blocked, uid);
 
 /**
+ * A driver counts as online only if their location is FRESH.
+ *
+ * The driver app republishes every few seconds while online and deletes the record when the
+ * driver goes offline, but there is no onDisconnect handler — so an app that was killed, lost
+ * signal, or ran out of battery leaves `online: true` behind forever. Trusting that flag showed
+ * 24 of 26 drivers online at once, which was never true.
+ */
+const ONLINE_WINDOW_MS = 5 * 60 * 1000;
+function locationOf(uid){ return state.locations[uid] || null; }
+function isOnline(uid){
+  const l = locationOf(uid);
+  if (!l || l.online !== true) return false;
+  const t = Number(l.updatedAt) || 0;
+  return t > 0 && (Date.now() - t) < ONLINE_WINDOW_MS;
+}
+function isStale(uid){
+  const l = locationOf(uid);
+  return !!(l && l.online === true && !isOnline(uid));
+}
+function ago(ms){
+  if (!ms) return "unknown";
+  const s = Math.max(0, Math.floor((Date.now() - Number(ms)) / 1000));
+  if (s < 60) return s + "s ago";
+  const m = Math.floor(s/60); if (m < 60) return m + "m ago";
+  const h = Math.floor(m/60); if (h < 24) return h + "h ago";
+  return Math.floor(h/24) + "d ago";
+}
+
+/**
  * Everyone we have any evidence of, not just those with a saved profile.
  * The customer app has no registration screen, so `customerProfiles` can be empty
  * while real customers exist in `orders` and `roles`.
@@ -558,12 +587,13 @@ function metrics(){
   const gmv       = delivered.reduce((s,x) => s + (Number(x.price)||0), 0);
   const drivers   = people("drivers");
   const customers = people("customers");
-  const online    = drivers.filter(d => state.locations[d.id] && state.locations[d.id].online === true).length;
+  const online    = drivers.filter(d => isOnline(d.id)).length;
+  const stale     = drivers.filter(d => isStale(d.id)).length;
   const settled   = delivered.length + lost.length;
   return {
     customers: customers.length, customersNamed: customers.filter(c=>c.name).length,
     drivers: drivers.length,     driversNamed: drivers.filter(d=>d.name).length,
-    online, orders:o.length, delivered:delivered.length, lost:lost.length, active:active.length,
+    online, stale, orders:o.length, delivered:delivered.length, lost:lost.length, active:active.length,
     gmv, aov: delivered.length ? gmv/delivered.length : 0,
     rate: settled ? Math.round(delivered.length/settled*100) : 0,
     blocked: Object.keys(state.blocked).length
@@ -574,7 +604,8 @@ function renderOverview(){
   const m = metrics();
   const tiles = [
     ["i-users","Customers", num(m.customers), m.blocked ? m.blocked+" blocked" : m.customersNamed+" with a saved profile"],
-    ["i-truck","Drivers",   num(m.drivers),   m.online+" online now"],
+    ["i-truck","Drivers",   num(m.drivers),
+      m.online + " online now" + (m.stale ? " · " + m.stale + " stale" : "")],
     ["i-box","Orders",      num(m.orders),    m.active+" in progress"],
     ["i-check","Delivered", num(m.delivered), m.rate+"% of finished orders"],
     ["i-cash","Value delivered", rs(m.gmv),   "cash collected by drivers"],
@@ -740,9 +771,16 @@ function renderPeople(kind){
 
     if (isDriver){
       const r = p.rating && p.rating.count ? (p.rating.sum/p.rating.count).toFixed(1) : "—";
-      const on = state.locations[p.id] && state.locations[p.id].online === true;
-      const st = el("span", on?"online":"offline");
-      if (on){ st.append(el("span","dot"), document.createTextNode("Online")); } else st.textContent="Offline";
+      const on = isOnline(p.id);
+      const st = el("span", on ? "online" : "offline");
+      if (on){
+        st.append(el("span","dot"), document.createTextNode("Online"));
+      } else if (isStale(p.id)){
+        st.textContent = "Last seen " + ago(locationOf(p.id).updatedAt);
+        st.title = "Still flagged online in the database, but has not reported since then.";
+      } else {
+        st.textContent = "Offline";
+      }
       tr.append(cell(dash(p.vehicleNumber)), cell(p.capacity?num(p.capacity)+" L":"—","num"),
                 cell(r,"num"), cell(st));
     } else {
@@ -853,7 +891,7 @@ document.addEventListener("click", e => {
       ...people("drivers").map(p=>[p.name,p.phone,p.email,p.vehicleNumber,p.capacity,
         p.rating&&p.rating.count?(p.rating.sum/p.rating.count).toFixed(2):"",
         p.orders,p.delivered,Math.round(p.value),
-        (state.locations[p.id]&&state.locations[p.id].online===true)?"YES":"",
+        isOnline(p.id)?"YES":(isStale(p.id)?"STALE":""),
         dOnly(p.joined),isBlocked(p.id)?"YES":"",p.id])]);
   }
 });
