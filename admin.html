@@ -353,6 +353,7 @@ figure.chart svg{display:block;width:100%;height:auto;overflow:visible}
 
       <section data-panel="drivers" class="hide">
         <div class="page-head"><h2>Drivers</h2><p id="driversCount"></p></div>
+        <div id="driverNote"></div>
         <div class="card">
           <div class="toolbar">
             <input type="search" id="qDrivers" placeholder="Search name, phone, email, vehicle…">
@@ -603,9 +604,11 @@ function metrics(){
 function renderOverview(){
   const m = metrics();
   const tiles = [
-    ["i-users","Customers", num(m.customers), m.blocked ? m.blocked+" blocked" : m.customersNamed+" with a saved profile"],
+    ["i-users","Customers", num(m.customers),
+      m.customersNamed + " registered" + (m.blocked ? " · " + m.blocked + " blocked" : "")],
     ["i-truck","Drivers",   num(m.drivers),
-      m.online + " online now" + (m.stale ? " · " + m.stale + " stale" : "")],
+      m.driversNamed + " registered · " + m.online + " online"
+      + (m.stale ? " · " + m.stale + " stale" : "")],
     ["i-box","Orders",      num(m.orders),    m.active+" in progress"],
     ["i-check","Delivered", num(m.delivered), m.rate+"% of finished orders"],
     ["i-cash","Value delivered", rs(m.gmv),   "cash collected by drivers"],
@@ -807,6 +810,22 @@ function renderPeople(kind){
   $(isDriver ? "#driversCount" : "#customersCount").textContent =
     `${num(shown.length)} of ${num(all.length)}`
     + (noProfile ? ` · ${num(noProfile)} have not saved a profile` : "");
+
+  if (isDriver){
+    const host3 = $("#driverNote");
+    if (host3){
+      host3.innerHTML = "";
+      const named = all.length - noProfile;
+      const d2 = el("div","note"); d2.append(icon("i-info"));
+      const s2 = el("div");
+      const b2 = el("b"); b2.textContent = "What counts as a driver here? ";
+      s2.append(b2, document.createTextNode(
+        `${all.length} accounts have signed into the driver app. ${named} finished the `
+        + `registration form (name, CNIC, vehicle) — those are your actual drivers. `
+        + `${noProfile} only signed in and stopped. Test accounts from development are counted too.`));
+      d2.append(s2); host3.append(d2);
+    }
+  }
 
   if (!isDriver){
     const host2 = $("#customerNote"); host2.innerHTML = "";
